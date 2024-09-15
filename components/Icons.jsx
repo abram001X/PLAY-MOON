@@ -1,0 +1,22 @@
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Feather from '@expo/vector-icons/Feather';
+
+export function PLayIcon(props){
+    return <AntDesign name="play" size={60} color="white" {...props}/>
+}
+
+export function RightIcon(props){
+    return <AntDesign name="stepforward" size={50} color="white" {...props}/>
+}
+
+export function LeftIcon(props){
+    return <AntDesign name="stepbackward" size={50} color="white" {...props}/>
+}
+
+export function RandomIcon(props){
+    return <FontAwesome name="random" size={22} color="white" {...props}/>
+}
+export function RepeatIcon(props){
+    return <Feather name="repeat" size={22} color="white" {...props}/>
+}

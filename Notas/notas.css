@@ -1,0 +1,462 @@
+/* colocar solid en border  (eje x: main axis, eje y cross axis)  Dom(la estructura del html)
+selectores
+descendente
+h2 p {
+    color: red;
+}
+
+por clases
+.titulo {
+    color: firebrick;
+}
+
+por id
+#boton {
+    color: coral;
+}
+
+por atributo
+[hola="aló"] {
+    color: darkgreen;
+}
+
+por tipo
+p {
+    color: navy;
+}
+
+pseudo (cuando pasas el mouse por encima)
+.tercer_titulo b:hover {
+    color: blueviolet;
+}--------------------------------------
+
+jerarquia de especifidad
+!important
+style
+id
+clases, pseudoclases, atributos
+elementos, pseudo_elemntos
+
+
+.contact-form__input--active {color: red;} para el identificado
+.contact-form__input:first-child { para primer tipo(elemento)
+    color: red;
+}----------------------------------------------
+
+para asignar una medida relativa a em usamos font size a la caja contenedora
+.form {
+    font-size: 10px --- font size: medidas de texto
+}
+
+.form__h2 {
+    font-size: 2em; medidas
+}----------------------------------------------------------------
+
+unidades
+propiedades de texto
+.form__h2 {
+    font-size: 2em; 
+    background-color: black; fondo
+    width: 100vw; ancho respecto a la pantalla
+    height: 100vh; alto respecto a la pantalla
+    width: 50%; ancho respecto a caja de bloques
+}--------------------------------------------------------
+
+
+.form__h2 {
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif; tipografia
+    line-height: 2; alto de espacio de letra
+    font-weight: 900; grosor de letra
+}----------------------------------------------------------
+
+padding bordes entre el texto y la caja de block
+h1{
+    background: black;
+    display: inline-block;
+    padding-bottom: 20px; inferior
+    padding-left: 30px; izquierda
+    padding-right: 30px; derecha 
+    padding-top: 20; inferior
+
+    h1 {
+    padding. 20px; 20 pixeles a todos los lados
+    }
+    h1 {
+    padding. 20px 30 px; (20px,30px)= (y,x)
+    }
+    h1 {
+        padding: 10px 20px 30px 40px; empieza desde top
+        text-alin: center; --centra el contenido 
+}----------------------------------------------------------------
+margin: distancia que separa las cajas
+muy similar al padding (la forma de usar y su funcion)
+
+.form__h2{
+    color: red;
+    background-color: black;
+    display: inline-block;
+    padding: 100px ;
+    margin: 10px;
+    border: 5px solid purple; estilo del borde
+    border-radius: 30px; bordeado de esquinas (50%)=circunferencia
+    box-shadow: 10px 20px 15px 0px blue; sombras de bordes (x, y, difuminacion de sombra, tamaño de bordes.
+    text-shadow: 10px 10px 25px blue; sombras de textos si  copiamos va a ser mas intenso
+    transform: rotate(360deg); rotacion
+}
+--------------------------------------
+0) outline: no ocupa un lugar real como el border 
+-------------
+1) position:relative;----: position: relative; se traslada desde su punto de referencia
+(tiene prioridad a la ultima position relative lo coloca delante)
+z index:  z-index: 60;  da prioridad al mayor (colocar en numeros grandes)
+
+colocando contenedor delante de hijo
+.contenedor {
+    width: 300px;
+    height: 300px;
+    background: blue;
+    margin: 40px;
+    position: relative; no puede estar definido
+}
+
+.hijo {
+    background-color: orange;
+    width: 120px;
+    height: 120px;
+    position:  relative;
+    z-index: -1; tiene que  tener -n(n=numero)
+    top: -20px;
+    left: -20px;
+}-----------------------------
+2) position:absolute;----: El posicionamiento 
+absolute hace que un elemento se coloque 
+respecto a su contenedor posicionado mas 
+cercano, si no encuentra ningún contenedor 
+cercano, 
+el elemento se colocara respecto al viewport
+(en un contenedor con  position absolute)
+
+colocando las cajas en cada esquina y en el centro 
+div {
+    background-color: blue;
+    display: block ;
+    font-size: 30px;
+    position: absolute;
+}
+
+div div{
+    height: 100px;
+    width: 100px;
+    background-color: yellow;
+}
+
+.contenedor{
+    position: relative;
+    border: 4px solid red;
+    margin: 50px auto;
+    height: 450px;
+    width: 450px;
+}
+.caja1 {
+    right: 0;
+    bottom: 0;
+}
+
+.caja2{
+    right: 0;
+}
+
+.caja3{
+    bottom: 0;
+}
+.caja4{
+    top: 0;
+}
+.caja5{
+  margin: 171px; calculando el centro
+   
+}
+centrando con auto:
+.caja5{
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+   
+}--------------------------------
+3)position: fixed;---: El posicionamiento fixed hace 
+que un elemento se coloque respecto al viewport, 
+Le dices dónde posicionarse al elemento, 
+y se queda ahí mientras el usuario hace scroll. El elemento 
+no conserva su espacio en el flujo, todo el espacio que tuviera reservado ese elemento desaparece.
+ejemplo:
+}
+body{
+    padding-top: 200px;
+}
+.caja_fixed{
+    background: purple;
+    position: fixed;
+    opacity: .3;
+    margin-top: -200px;
+}---------------------------------------
+4)position: sticky;-----: El posicionamiento sticky puede 
+considerarse un híbrido de los posicionamientos relativo y fijo
+. Un elemento con posicionamiento sticky es 
+tratado como un elemento posicionado relativamente hasta que 
+cruza un umbral especificado, en cuyo punto se trata como fijo 
+hasta que alcanza el límite de su padre.
+ejemplo: 
+.caja_fixed{
+    background: purple;
+    position: sticky;
+    opacity: .3;
+    top: 0;
+}-------------------------------------------------------------------------
+display:
+1)block : ocupan todo el espacio
+------------  
+2)inline : ocupan  solo lo que el contenido les da(no se puedde modificar)
+------------
+3)inline-block : podemos modificar las dimensiones de las cajas (actua como inline y block)
+ejemplo:
+b{
+    width: 150px;
+    height: 150px;
+    margin: 20px;
+    border: 10px solid black;
+    background: purple;
+    display: inline-block;
+}--------------------------------------------------
+overflow: overflow-y: scroll de eje y------ overflow-x: scroll de eje x
+1) valor auto : detecta que si el texto sobra(sobresale)
+nos da la posibilidad de scrollear dentro de la caja
+2)scroll: crea un scroll 
+3)hidden: oculta el scroll
+ejemplo:
+section{
+    margin: auto;
+    width: 320px;
+    height: 350px;
+    margin-top: 50px;
+    border: 4px solid black;
+    background: purple; 
+    overflow: scroll;
+}--------------------------------------------------------
+float:La propiedad CSS float ubica un elemento al lado 
+izquierdo o derecho de su contenedor, 
+permitiendo a los elementos de texto y en línea aparecer a 
+su costado.
+ejemplo:
+.contenedor{
+    background:purple;
+    margin: auto;
+    border: 4px solid black;
+    margin-top: 50px;
+    width: 50%; ancho del block respecto al vw
+    padding: 20px;
+}
+
+.contenedor img {
+    float: left;
+    width: 300px;
+    height: 400px;
+    margin-right: 10px;
+    border: 4px solid black;
+}---------------------------------------------------------
+pseudo-elementos: 
+1).texto::first-line-----:sirve para editar la primera linea del
+ texto (no funciona en inline)
+2).texto::first-letter-----: funciona para editar 
+la primera letra del texto  (no funciona en inline)
+3).texto::placeholder-----: editar el placeholder
+4)input::selection ------: editar el marcado con el mouse 
+(actua como inline)
+5)b::before----:funciona para añadir mas texto antes de lo escrito en el Dom(son elementos hijos xd)
+6)b::after----:funciona para añadir mas texto despues de lo escrito en el Dom
+-------------------------------------------------------------------
+pseudo-clases:
+1)hover :----- editar el elemento al colocar el mouse por encima del mismo
+ejemplo:
+.caja1 {
+    height: 200px;
+    width: 200px;
+    background: purple;
+    border: 4px solid black;
+    transition: all 2s; ----- añade todo
+     transition: all 2s border 1s; todo excepto border 
+}
+.caja1:hover{
+    background: blue;
+    height: 300px;
+    width: 300px;
+    transition: background 3s, height 1s, width 1s;
+    
+}---------------------------
+2)a::link-----:edita el link
+3)a::visited---:se usa para editar un link ya abierto
+ejemplo: 
+a:link {
+    color: red;
+}
+
+a:visited {
+    color: green;
+}-----------------------------
+4)section.active:----: se usa para editar un 
+elemento que cambia al hacer click 
+ejemplo:
+.caja1 {
+    width: 300px;
+    margin: 25px;
+    background: grey;
+    height: 300px;
+    transition: all 1s;
+}
+
+.caja1:active {
+    background: darkslateblue;
+    width: 400px;
+}-------------------------------
+5)input:focus: se usa para editar el input clickeado
+ejemplo:
+.caja1 {
+    transition: all 1s;
+}
+
+.caja1:focus {
+    background: darkslateblue;
+    width: 400px;
+}-------------------------------
+6):lang()-----: se usa para editar los textos que estan
+en otro idioma
+ejemplo:
+caja1 b:lang(en) {
+    background: purple;
+    padding: 20px;
+    color: grey;
+}---------------------------------------------------------------------
+Object-fit. fil:
+1)object-fit:contain-------: El contenido reemplazado se 
+escala para mantener su relación de aspecto mientras se 
+ajusta dentro del cuadro de contenido del elemento.
+(queda enel medio del cuadro)
+2)object-fit:cover-------: la imagen se ajusta al contenedor
+ recortandolo etc..(ocupa todo el contenedor)
+3)object-fit:none-----: la imagen ejecuta cualquiera de las
+ dos anteriores (internet:__El contenido reemplazado no se
+  redimensionase mantiene del tamaño  original.)
+4)object-fit: scale-down : El contenido se dimensiona como 
+si none o contain estuvieran especificados, lo que
+resultaría en un tamaño de objeto concreto más pequeño.
+(elige entre contain y cover y se queda con el mas pequeño)
+5)object-position:-----: se usa para elegir la position 
+de la imagen dentro del cuadro 
+ejemplo : 
+.cont {
+    color: white;
+    margin: 25px;
+    width: 300px;
+    height: 300px;
+}
+
+.cont img{
+
+    height: 100%;
+    width: 100%;
+    border: solid purple;
+    object-fit: cover;
+    object-position: left ; elegir a que lado se traslada
+    object-position: 20px---: elegir cuantos px se traslada
+    (funciona con cualquier unidad de medida)
+}------------------------------------------------------------------------
+cursor: se usa para cambiar el cursor
+ejemplo:
+.cont {
+    color: white;
+    margin: 25px;
+    width: 300px;
+    height: 300px;
+    border: solid purple;
+    cursor: pointer;
+}-------------------------------------------------------------------------
+color: colores
+1)nombre: eliges el nombre del color
+2)hexadecimal: eliges el color con numeros hexadecimal 
+3)rgb(0,0,0) : mezcla de colores (llega hasta 255,
+blanco(todos los colores al maximo), negro(al minimo todos los colores)
+4)rgba(0,0,0,0) : opacidad al color respecto al fondo
+--------------------------------------------------------
+solo para contenedores flex
+display: flex;----: 
+flex-direction: ;----:modificar la direccion de main axis(eje x) o cross axis
+flex-direction: row-reverse;----:revierte la direccion de los ejes
+flex-direction: column-reverse;----: esstructura los elementos en columnas... y los revierte(con reverse)
+ejemplo:
+.flex__cont {
+    display: flex;
+    font-size: 18px;
+    flex-direction:column
+}-----------------
+flex-wrap:se usa para bajar los bloques cuando se achica la pantalla (se puede usar reverse)
+flex-flow: column wrap: para abreviar flex-wrap y flex-direction
+ejemplo:
+.flex__cont {
+    display: flex;
+    font-size: 18px;
+    flex-flow: column wrap;
+}------------------------------------------------------
+main axis:
+justify-content: center;----: centra los bloques 
+justify-content: space-around;-----centra los bloques con margin en cada uno(funciona como margin auto=)   
+justify-content: space-between ; centra los bloques con margin entre cada bloque
+justify-content: space-evenly; le coloca el mismo margin a cada bloque
+display: flex;
+    font-size: 18px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+cross axis:
+align-items: center; centra los bloques en el medio de la pantalla
+align-items: flex_end; coloca los bloques al final de la pantalla
+align-content: ajusta las líneas dentro de un contenedor flex cuando hay espacio extra en 
+el eje transversal.
+--------------------
+solo para flex
+margin-left,top,right,bottom: auto ;------: coloca los items al lado contrario el maximo
+----------------------------
+para flex-items(bloques u hijos):
+alin-self : start;-----: """coloca el item al comienzo de la pantalla"""
+align-self : end;-----: coloca el item al final de la pantalla
+align-self : center;-----: centra el item en el medio de la pantalla
+align-self : baseline;-----: """coloca los item al principio de la pantalla"""
+flex-grow : 1;-----:(si se coloca en el padre de los flex items) recoge el espacio sobrante 
+y los reparte entre los  items
+ejemplo: 
+.flex__item {
+    background: #25a;
+    color: #fff;
+    min-width: 120px;
+    margin: 5px;
+    text-align: center;
+    height: 150px;
+    flex-grow: 1;
+}------------------------------
+flex-grow : 1;-----:(si se coloca en el hijo de los flex items) recoge el espacio sobrante 
+y lo agrega al item
+se puede elegir la cantidad a repartir con flex-grow:2; o  mas
+ejemplo: 
+.green {
+    background-color: #090;
+    flex-grow: 1;
+}------------------------------
+flex-basis: 300px;-----: actua como width pero tiene prioridad(solo funciona para items flex)
+flex-shrink: 1 ;-----: Los flex items se encogerán para llenar el contenedor de acuerdo a su número flex-shrink ,
+ cuando el tamaño por defecto de los flex items sea mayor al de su contenedor flex container.
+order es similar a z-index(pero en los ejes x,y)
+min-width:;----: minimo tamaño añadido a un bloque(item) 
+background: linear-gradient(to bottom, transparent,#777):
+degradado del fondo 
+-------------------------------
+

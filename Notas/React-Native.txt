@@ -1,0 +1,201 @@
+//Visitar SVGR para convertir svg a componentes etc..
+
+__________________________________________________________________________________
+Dependencia de stack
+npm install @react-navigation/stack
+_________________________________________________________________________________
+Dependencias para iniciar la web aplication
+npx expo install react-dom react-native-web @expo/metro-runtime
+_________________________________________________________________________________
+dependecias para el int y prettier
+npx expo lint
+npx expo install -- --save-dev prettier eslint-config-prettier eslint-plugin-prettier
+_________________________________________________________________________________
+
+constantes de expo que extrae información del móvil
+npx expo install expo-constants
+_________________________________________________________________________________
+Dependencia para que no desborde la pantalla (alternativa del que está arriba)
+npx expo install react-native-safe-area-context
+_________________________________________________________________________________
+Dependencia para cargar svg
+npx expo install react-native-svg
+______________________________________________________________________
+Depenedencia para tailwind
+npm install nativewind@2
+npm install --save-dev --save-exact tailwindcss@3.3.2
+npx tailwindcss init
+______________
+________________________________________________________
+Dependencia para enrutado
+npx expo install react-native-screen
+npx expo install expo-linking
+npx expo install expo-router 
+______________________________________________________________________
+Dependencia para iconos 
+npm install @expo/vector-icons
+______________________________________________________________________
+Esto va en el archivo tailwind en content
+'./App.{js,jsx,ts,tsx}',
+    './components/**/*.{js,jsx,ts,tsx}',
+    './app/**/*/.{js,jsx,ts,tsx}'
+______________________________________________
+todoo los atributos son flex
+view == div
+_________________________________________________________________________________
+
+obtener imagen local 
+Ejemplo: 
+
+import icon from './assets/favicon.png'
+const icon = require('./assets/favicon.png')
+Los botones no se pueden estilar, solo cambiar el color
+_________________________________________________________________________________
+
+import { StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
+<ActivityIndicator/> ---> Componente Loading
+_________________________________________________________________________________
+Alternativa para ScrollView es FlatList:
+Ejemplo:
+import { StyleSheet, View, ScrollView, FlatList, ActivityIndicator } from 'react-native';
+
+{games.length == 0 ? (
+        <ActivityIndicator />
+      ) : (
+        <View style={styles.container}>
+          <FlatList
+            data={games}
+            keyExtractor={(game) => game.slug}
+            renderItem={({ item }) => <Gallery game={item} />}
+          />
+        </View>
+      )}
+_________________________________________________________________________________
+
+
+Colocar el padding de el interfaz de la batería:
+
+Gallery:
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+export function Gallery({obj}) {
+    const insets = useSafeAreaInsets()
+
+App.js:
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+export default function App() {
+  return (
+    <SafeAreaProvider>
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <ScrollView>
+       <Main/>
+      </ScrollView>
+    </View>
+    </SafeAreaProvider>
+_________________________________________________________________________________
+
+componente que se usa como botón y se puede estilar 
+Ejemplo:
+<TouchableHighlight 
+        title="Pulsa este botón"
+        onPress={()=>{alert("pulsado!")}}
+        style={{backgroundColor: "#643", padding: 10, borderRadius: 5}} 
+>
+        <Text style={{ color: '#fff' }}>Pulsa este botón bro </Text>
+      
+</TouchableHighlight>
+_________________________________________________________________________________
+
+Colocar scroll:
+<ScrollView></ScrollView> ---> Se usa para textos no dinámicos sino para textos estáticos
+_________________________________________________________________________________
+Colocar la interfaz de la batería corectamente
+  <SafeAreaView/>
+______________________________________________________________________________
+______________________________________________________________________________
+styles:
+Addaptar la imagen :
+resizeMode: 'contain', 'repeat', 'stretch','center'
+
+desenfocar imagen:
+blurRadio={3} 
+
+<Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? "#3ad" : "#fff"
+          },
+          styles.wrapperCustom
+        ]}
+      >
+        {({ pressed }) => (
+          <Text
+            style={
+              pressed
+                ? { color: '#000', fontSize: 20 }
+                : { color: '#0f0fa', fontSize: 15 }
+              
+            }
+          >
+            Pulsa este botón bro{' '}
+          </Text>
+        )}
+      </Pressable>
+
+
+______________________________________________________________________________
+Tabs : Pestañas 
+<Tabs screenOptions={{
+            headerShown: false,
+            tabBarStyle: {backgroundColor: '#000'},
+            tabBarActiveTintColor: 'blue'
+        }}>
+            <Tabs.Screen name='index'
+            options={{
+                title: 'Inicio',
+                tabBarIcon: ({color})=> <HomeIcon color={color}/>
+            }}/>
+            <Tabs.Screen name='about'
+            options={{
+                title: 'About',
+                tabBarIcon: ({color})=> <AboutIcon color={color}/>
+            }}/>
+        </Tabs>
+
+______________________________________________
+Links : 
+<Link asChild href="/">
+            <Pressable>
+             <HomeIcon/>
+            </Pressable>
+          </Link>
+
+______________________________________________
+rutas dinámicas :
+ <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: 'black' },
+        headerTintColor: 'white',
+        headerTitle: '',
+        headerLeft: () => <Logo />,
+        headerRight: () => (
+          <Link
+            asChild
+            href="/about"
+            className="text-blue-500 text-xl text-center m-2"
+          >
+            <Pressable>
+              <AboutIcon/>
+            </Pressable>
+          </Link>
+        )
+      }}
+    />
+
+personalizar header de ruta en la pagina que está 
+<Stack.Screen options={{
+            headerStyle: {backgroundColor: '#69f'},
+            headerTitle: 'About',
+            headerRight: ()=>{},
+            headerLeft: ()=>{},
+        }}/>
