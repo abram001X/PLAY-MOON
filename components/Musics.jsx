@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, View, Text, StyleSheet, Image, Pressable, } from 'react-native';
+import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Audio } from 'expo-av';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { Link } from 'expo-router';
