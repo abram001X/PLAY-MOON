@@ -5,7 +5,6 @@ import {
   View,
   Button,
   Text,
-  Dimensions,
   ImageBackground,
   TouchableHighlight
 } from 'react-native';
@@ -17,7 +16,7 @@ import {
   RepeatIcon,
   RightIcon
 } from '../components/Icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
 import { getSound } from '../lib/files';
 import { duration } from '../lib/duration';
@@ -26,10 +25,9 @@ import { Audio } from 'expo-av';
 export default function InterfacePlay() {
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
-  //const [valueRange, setValueRange] = useState('0:00');
   const [fileAudio, setFileAudio] = useState(null);
   const { fileId } = useLocalSearchParams();
-  const [pauseOrPlay, setPauseOrPlay] = useState(false);
+  const [pauseOrPlay, setPauseOrPlay] = useState(true);
   const [positionAudio, setPositionAudio] = useState(0);
   useEffect(() => {
     getSound(fileId).then((assets) => {
@@ -40,31 +38,34 @@ export default function InterfacePlay() {
   }, [fileId]);
 
   const createAudio = async (uri) => {
-    const { sound: soundObject} = await Audio.Sound.createAsync({
+    const { sound: soundObject } = await Audio.Sound.createAsync({
       uri
     });
     const currentStatus = await soundObject.getStatusAsync();
-    setPositionAudio(currentStatus.positionMillis/1000);
+    setPositionAudio(currentStatus.positionMillis / 1000);
     return setFileAudio(soundObject);
   };
-
 
   const pauseSound = async () => {
     await fileAudio.pauseAsync();
     setPauseOrPlay(true);
-    clearInterval(interval)
+    clearInterval();
   };
   const playSound = async () => {
     await fileAudio.playAsync();
     setPauseOrPlay(false);
-    const interval = setInterval(async () => {
+    setInterval(async () => {
       const currentStatus = await fileAudio.getStatusAsync();
-      setPositionAudio(currentStatus.positionMillis / 1000);
-    }, 100);
-    return interval
+      if (currentStatus.isPlaying) {
+        setPositionAudio(currentStatus.positionMillis / 1000);
+      }
+    }, 1000);
   };
-
-
+  const updatePositionSound = async (position) => {
+    clearInterval();
+    const positionSound = await fileAudio.setPositionAsync(position * 1000);
+    setPositionAudio(positionSound.positionMillis / 1000);
+  };
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
@@ -94,12 +95,12 @@ export default function InterfacePlay() {
               minimumValue={0}
               maximumValue={sound && sound[0].duration}
               value={positionAudio}
-              onValueChange={(value) => setPositionAudio(value[0])}
+              onValueChange={(value) => updatePositionSound(value[0])}
             />
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-between' }}
             >
-              <Text style={{ color: '#fff' }}>{valueRange} </Text>
+              <Text style={{ color: '#fff' }}>{duration(positionAudio)} </Text>
               <Text style={styles.duration}>{seconds && seconds} </Text>
             </View>
           </View>
