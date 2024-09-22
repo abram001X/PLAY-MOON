@@ -14,7 +14,8 @@ import {
   PLayIcon,
   RandomIcon,
   RepeatIcon,
-  RightIcon
+  RightIcon,
+  PauseIcon
 } from '../components/Icons';
 import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
@@ -22,6 +23,7 @@ import { getPermission, getSound } from '../lib/files';
 import { duration } from '../lib/duration';
 import { Audio } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
+
 export default function InterfacePlay() {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [sound, setSound] = useState(null);
@@ -32,8 +34,9 @@ export default function InterfacePlay() {
   const [albumsUri, setAlbumsUri] = useState();
   const [id, setId] = useState();
   const [state, setState] = useState(true);
-  const [status,  setStatus] = useState(null);
+  const [randomMode, setRandomMode] = useState(false);
   const { fileId } = useLocalSearchParams();
+
   useEffect(() => {
     setId(parseInt(fileId));
     getSound(fileId).then((assets) => {
@@ -42,30 +45,28 @@ export default function InterfacePlay() {
       setSeconds(duration(assets[0].duration));
     });
   }, [fileId]);
-  
+
   useEffect(() => {
     getPermission(permissionResponse, requestPermission).then((assets) => {
       setAlbumsUri(
         assets.map((obj) => {
-          return obj.id;
+          return parseInt(obj.id);
         })
       );
     });
   }, [permissionResponse, fileId, requestPermission]);
 
-
   //  Obtener audio
   const createAudio = async (uri) => {
     const { sound: soundObject } = await Audio.Sound.createAsync(
       { uri },
-      {shouldPlay: true}
+      { shouldPlay: true }
     );
 
     const currentStatus = await soundObject.getStatusAsync();
     setPositionAudio(currentStatus.positionMillis / 1000);
     setFileAudio(soundObject);
-    setStatus(currentStatus);
-    setPauseOrPlay(false)
+    setPauseOrPlay(false);
   };
 
   const pauseSound = async () => {
@@ -83,7 +84,7 @@ export default function InterfacePlay() {
         setPositionAudio(currentStatus.positionMillis / 1000);
       }
       setState(true);
-    }, 1000);
+    }, 800);
   };
 
   const updatePositionSound = async (position) => {
@@ -91,36 +92,24 @@ export default function InterfacePlay() {
     setPositionAudio(positionSound.positionMillis / 1000);
   };
 
-  const changeSound = () => {
-    albumsUri.map((obj) => {
-      if (id == obj) {
-        setId(parseInt(obj) + 1);
-      }
-    });
+  const backSound = () => {
+    setId(albumsUri[albumsUri.indexOf(id) - 1]);
     pauseSound();
     setPositionAudio(0);
-    const num = id + 1;
+    const num = albumsUri[albumsUri.indexOf(id) - 1];
     getSound(num).then((assets) => {
-      console.log('mayoor');
-
       setSound(assets[0]);
       createAudio(assets[0].uri);
       setSeconds(duration(assets[0].duration));
     });
     setState(false);
   };
-
-  const backSound = () => {
-    albumsUri.map((obj) => {
-      if (id == obj) {
-        setId(parseInt(obj) - 1);
-      }
-    });
+  const changeSound = () => {
+    setId(albumsUri[albumsUri.indexOf(id) + 1]);
     pauseSound();
     setPositionAudio(0);
-    const num = id - 1;
+    const num = albumsUri[albumsUri.indexOf(id) + 1];
     getSound(num).then((assets) => {
-      console.log('menor');
       setSound(assets[0]);
       createAudio(assets[0].uri);
       setSeconds(duration(assets[0].duration));
@@ -131,7 +120,16 @@ export default function InterfacePlay() {
   if (sound && duration(positionAudio) == seconds && state) {
     changeSound();
   }
-  
+
+  const randomList = () => {
+    setAlbumsUri(albumsUri.sort(() => Math.random() - 0.5));
+    setRandomMode(true);
+  };
+  const orderList = () => {
+    setAlbumsUri(albumsUri.sort((a, b) => a - b));
+    setRandomMode(false);
+  };
+
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
@@ -172,7 +170,13 @@ export default function InterfacePlay() {
           </View>
 
           <View style={styles.contPlay}>
-            <RandomIcon />
+            <TouchableHighlight
+              onPress={() => {
+                randomMode ? orderList() : randomList();
+              }}
+            >
+              <RandomIcon />
+            </TouchableHighlight>
             <TouchableHighlight
               onPress={() => {
                 backSound();
@@ -185,7 +189,7 @@ export default function InterfacePlay() {
                 pauseOrPlay ? playSound() : pauseSound();
               }}
             >
-              <PLayIcon />
+              {!pauseOrPlay ?<PauseIcon/>:<PLayIcon />}
             </TouchableHighlight>
             <TouchableHighlight
               onPress={() => {
