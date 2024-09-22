@@ -10,7 +10,6 @@ export default function Musics({ album }) {
   /*useEffect(() => {
     playAudio(album.uri)
   }, []);*/
-
   const playSound = async () => {
     await sound.playAsync();
   };

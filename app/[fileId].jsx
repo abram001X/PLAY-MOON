@@ -18,32 +18,54 @@ import {
 } from '../components/Icons';
 import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
-import { getSound } from '../lib/files';
+import { getPermission, getSound } from '../lib/files';
 import { duration } from '../lib/duration';
 import { Audio } from 'expo-av';
-
+import * as MediaLibrary from 'expo-media-library';
 export default function InterfacePlay() {
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
   const [fileAudio, setFileAudio] = useState(null);
-  const { fileId } = useLocalSearchParams();
   const [pauseOrPlay, setPauseOrPlay] = useState(true);
   const [positionAudio, setPositionAudio] = useState(0);
+  const [albumsUri, setAlbumsUri] = useState();
+  const [id, setId] = useState();
+  const [state, setState] = useState(true);
+  const [status,  setStatus] = useState(null);
+  const { fileId } = useLocalSearchParams();
   useEffect(() => {
+    setId(parseInt(fileId));
     getSound(fileId).then((assets) => {
-      setSound(assets);
+      setSound(assets[0]);
       createAudio(assets[0].uri);
       setSeconds(duration(assets[0].duration));
     });
   }, [fileId]);
-
-  const createAudio = async (uri) => {
-    const { sound: soundObject } = await Audio.Sound.createAsync({
-      uri
+  
+  useEffect(() => {
+    getPermission(permissionResponse, requestPermission).then((assets) => {
+      setAlbumsUri(
+        assets.map((obj) => {
+          return obj.id;
+        })
+      );
     });
+  }, [permissionResponse, fileId, requestPermission]);
+
+
+  //  Obtener audio
+  const createAudio = async (uri) => {
+    const { sound: soundObject } = await Audio.Sound.createAsync(
+      { uri },
+      {shouldPlay: true}
+    );
+
     const currentStatus = await soundObject.getStatusAsync();
     setPositionAudio(currentStatus.positionMillis / 1000);
-    return setFileAudio(soundObject);
+    setFileAudio(soundObject);
+    setStatus(currentStatus);
+    setPauseOrPlay(false)
   };
 
   const pauseSound = async () => {
@@ -51,6 +73,7 @@ export default function InterfacePlay() {
     setPauseOrPlay(true);
     clearInterval();
   };
+
   const playSound = async () => {
     await fileAudio.playAsync();
     setPauseOrPlay(false);
@@ -59,13 +82,56 @@ export default function InterfacePlay() {
       if (currentStatus.isPlaying) {
         setPositionAudio(currentStatus.positionMillis / 1000);
       }
+      setState(true);
     }, 1000);
   };
+
   const updatePositionSound = async (position) => {
-    clearInterval();
     const positionSound = await fileAudio.setPositionAsync(position * 1000);
     setPositionAudio(positionSound.positionMillis / 1000);
   };
+
+  const changeSound = () => {
+    albumsUri.map((obj) => {
+      if (id == obj) {
+        setId(parseInt(obj) + 1);
+      }
+    });
+    pauseSound();
+    setPositionAudio(0);
+    const num = id + 1;
+    getSound(num).then((assets) => {
+      console.log('mayoor');
+
+      setSound(assets[0]);
+      createAudio(assets[0].uri);
+      setSeconds(duration(assets[0].duration));
+    });
+    setState(false);
+  };
+
+  const backSound = () => {
+    albumsUri.map((obj) => {
+      if (id == obj) {
+        setId(parseInt(obj) - 1);
+      }
+    });
+    pauseSound();
+    setPositionAudio(0);
+    const num = id - 1;
+    getSound(num).then((assets) => {
+      console.log('menor');
+      setSound(assets[0]);
+      createAudio(assets[0].uri);
+      setSeconds(duration(assets[0].duration));
+    });
+    setState(false);
+  };
+
+  if (sound && duration(positionAudio) == seconds && state) {
+    changeSound();
+  }
+  
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
@@ -85,7 +151,7 @@ export default function InterfacePlay() {
         <View style={styles.contInterfaz}>
           <View style={styles.contText}>
             <Text style={styles.textTitle}>
-              {sound && sound[0].filename.slice(0, 50)}...{' '}
+              {sound && sound.filename.slice(0, 50)}...{' '}
             </Text>
           </View>
           <View style={styles.slider}>
@@ -93,7 +159,7 @@ export default function InterfacePlay() {
               minimumTrackTintColor="#18f"
               maximumTrackTintColor="#fff"
               minimumValue={0}
-              maximumValue={sound && sound[0].duration}
+              maximumValue={sound && sound.duration}
               value={positionAudio}
               onValueChange={(value) => updatePositionSound(value[0])}
             />
@@ -107,7 +173,13 @@ export default function InterfacePlay() {
 
           <View style={styles.contPlay}>
             <RandomIcon />
-            <LeftIcon />
+            <TouchableHighlight
+              onPress={() => {
+                backSound();
+              }}
+            >
+              <LeftIcon />
+            </TouchableHighlight>
             <TouchableHighlight
               onPress={() => {
                 pauseOrPlay ? playSound() : pauseSound();
@@ -115,7 +187,13 @@ export default function InterfacePlay() {
             >
               <PLayIcon />
             </TouchableHighlight>
-            <RightIcon />
+            <TouchableHighlight
+              onPress={() => {
+                changeSound();
+              }}
+            >
+              <RightIcon />
+            </TouchableHighlight>
             <RepeatIcon />
           </View>
         </View>

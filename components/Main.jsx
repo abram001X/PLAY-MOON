@@ -14,6 +14,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { Stack } from 'expo-router';
 import { ResizeMode } from 'expo-av';
 export default function Main() {
+  
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [albums, setAlbums] = useState();
   const [pages, setPages] = useState(500);
@@ -24,7 +25,9 @@ export default function Main() {
     getPermission(permissionResponse, requestPermission).then((assets) => {
       setAlbums(assets);
     });
+
   }, [permissionResponse, requestPermission]);
+
   /*const handleLoadMore = () => {
     if (morePages && loading) {
       setPages(pages + 500);
@@ -32,6 +35,7 @@ export default function Main() {
     }
   };*/
   //console.log(albums);
+
   return (
     <ImageBackground source={require('../assets/fondo.jpeg')} style={styles.imgBack}>
       <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
