@@ -7,42 +7,56 @@ import {
   Text,
   ImageBackground,
   TouchableHighlight,
-  Pressable
+  Pressable,
+  BackHandler
 } from 'react-native';
-import { Link, Stack, useLocalSearchParams } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import {
   LeftIcon,
-  PLayIcon,
+  PlayIcon,
   RandomIcon,
   RepeatIcon,
   RightIcon,
-  PauseIcon
-} from '../components/Icons';
+  PauseIcon,
+  BackIcon
+} from './Icons';
 import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
 import { getPermission, getSound } from '../lib/files';
 import { duration } from '../lib/duration';
 import { Audio } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
+import { pauseAudio, playAudio } from '../lib/playAudio';
 
-export default function InterfacePlay() {
+export default function Reproductor({
+  fileId,
+  handleFile,
+  createAudio,
+  fileAudio,
+  status,
+  isPlaying
+}) {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
-  const [fileAudio, setFileAudio] = useState(null);
-  const [pauseOrPlay, setPauseOrPlay] = useState(false);
   const [positionAudio, setPositionAudio] = useState(0);
   const [albumsUri, setAlbumsUri] = useState();
   const [id, setId] = useState();
   const [state, setState] = useState(true);
   const [randomMode, setRandomMode] = useState(false);
-  const { fileId } = useLocalSearchParams();
+  useEffect(()=>{
+    const backAction =()=>{
+        handleFile(id,false)
+        return true
+    }
 
+    const backHandler = BackHandler.addEventListener('hardwareBackPress',backAction)
+    return ()=> backHandler.remove()
+},[])
   useEffect(() => {
     setId(parseInt(fileId));
     getSound(fileId).then((assets) => {
       setSound(assets[0]);
-      createAudio(assets[0].uri);
       setSeconds(duration(assets[0].duration));
     });
   }, [fileId]);
@@ -57,28 +71,15 @@ export default function InterfacePlay() {
     });
   }, [permissionResponse, fileId, requestPermission]);
 
-  //  Obtener audio
-  const createAudio = async (uri) => {
-    const { sound: soundObject } = await Audio.Sound.createAsync(
-      { uri },
-      //{ shouldPlay: true }
-    );
-
-    const currentStatus = await soundObject.getStatusAsync();
-    setPositionAudio(currentStatus.positionMillis / 1000);
-    setFileAudio(soundObject);
-    setPauseOrPlay(false);
-  };
-
-  const pauseSound = async () => {
-    await fileAudio.pauseAsync();
-    setPauseOrPlay(true);
+  const pauseSound = () => {
+    pauseAudio(fileAudio);
+    isPlaying(true)
     clearInterval();
   };
 
-  const playSound = async () => {
-    await fileAudio.playAsync();
-    setPauseOrPlay(false);
+  const playSound = () => {
+    playAudio(fileAudio);
+    isPlaying(false)
     setInterval(async () => {
       const currentStatus = await fileAudio.getStatusAsync();
       if (currentStatus.isPlaying) {
@@ -104,6 +105,7 @@ export default function InterfacePlay() {
       setSeconds(duration(assets[0].duration));
     });
     setState(false);
+    isPlaying(false)
   };
   const changeSound = () => {
     setId(albumsUri[albumsUri.indexOf(id) + 1]);
@@ -116,6 +118,7 @@ export default function InterfacePlay() {
       setSeconds(duration(assets[0].duration));
     });
     setState(false);
+    isPlaying(false)
   };
 
   if (sound && duration(positionAudio) == seconds && state) {
@@ -141,6 +144,11 @@ export default function InterfacePlay() {
           options={{
             headerStyle: { backgroundColor: '#ddd' },
             headerTitle: 'Reproductor',
+            headerLeft: () => (
+              <TouchableHighlight onPress={() => handleFile(id, false)}>
+                <BackIcon />
+              </TouchableHighlight>
+            ),
             headerTintColor: '#000'
           }}
         />
@@ -174,12 +182,18 @@ export default function InterfacePlay() {
             <TouchableHighlight
               activeOpacity={0.6}
               underlayColor="#222"
-              style={randomMode && {backgroundColor: '#222',padding: 5,borderRadius: 50}}
+              style={
+                randomMode && {
+                  backgroundColor: '#222',
+                  padding: 5,
+                  borderRadius: 50
+                }
+              }
               onPress={() => {
                 randomMode ? orderList() : randomList();
               }}
             >
-              <RandomIcon/>
+              <RandomIcon />
             </TouchableHighlight>
             <TouchableHighlight
               activeOpacity={0.9}
@@ -193,10 +207,10 @@ export default function InterfacePlay() {
             </TouchableHighlight>
             <Pressable
               onPress={() => {
-                pauseOrPlay ? playSound() : pauseSound();
+                status ? playSound() : pauseSound();
               }}
             >
-              {!pauseOrPlay ? <PauseIcon /> : <PLayIcon />}
+              {!status ? <PauseIcon /> : <PlayIcon />}
             </Pressable>
             <TouchableHighlight
               activeOpacity={0.7}

@@ -1,8 +1,9 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-export function PLayIcon(props) {
+export function PlayIcon(props) {
   return <AntDesign name="play" size={60} color="white" {...props} />;
 }
 
@@ -23,4 +24,8 @@ export function RepeatIcon(props) {
 
 export function PauseIcon(props) {
   return <AntDesign name="pausecircle" size={60} color="white" {...props}/>
+}
+
+export function BackIcon(props) {
+  return <Ionicons name="arrow-back" size={24} color="black" {...props}/>
 }

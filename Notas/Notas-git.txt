@@ -1,0 +1,117 @@
+cd : Me desplazo por los archivos(para entrar en las carpetas)
+
+mkdir : crea una carpeta
+
+../ : Se usa para ir atrás de una carpeta en la que entré(salir de uan carpeta) 
+no hace falta la barra
+
+git init: inicializar git en la carpeta
+
+ls : Lee los archivos que están dentro de la carpeta que inicializaste 
+
+-a : Lee los archivos ocultos (ls -a)
+
+git add : Agrega los archivos al area de preparación (con add . agrega todos los archivos)
+
+git status : nos muestra información sobre el directorio de trabajo y el area de preparación 
+
+git rm --cached <file>(nombre del archivo): Remueve el archivo  
+
+git restore <archivo> : Restaura el archivo eliminado en area local(en carpetas) después de haberlo subido en la 
+
+git commit -m : Agrega desde el area de preparación hacia el repositorio (-m Es para dejar un mensaje)
+
+git commit -a : Agrega los archivos al repositorio sin haberlos pasado por el area de preparación
+
+git checkout <archivo>: Regresa al ultimo commit que se hizo al archivo ("al ultimo guardado") (Cuando haces un cambio en el archivo y usas checkout deshace el cambio antes de addk)
+
+git reset : cuando agregamos el archivo al area de trabajo y agregamos contenido para volver al archivo se resetea
+
+git reset --hard : descarta los cambios desde el repositorio y descarta los cambios en el area de staged
+
+git mv <name old> por <name new> : Cambia el nombre del archivo es importante volver agregar el archivo a commit si estaba agregado... si se cambia el nombre desde el area local y se hace checkout restaura el archivo que tenia el name old.
+
+git status -s : nos devuelve info especifica ()
+
+git show <archivo> : Nos muestra el contenido nuevo y el contenido que se reemplazó
+
+git status -s : si el archivo tiene una M verde = "tienes un archivo modificado que está en el area de stagen" 
+
+git status -s : si el archivo tiene una M rojo = 
+
+git diff --staged : Nos muestra las versiones modificadas en el area de trabajo y en el staged (lo rojo es lo que está en el commit y lo verde es lo que está en el area de preparación)
+
+git log : Nos muestra el identificador
+
+git log --oneline : Nos lo muestra resumido
+
+git config --global core.abbrev <carácter>: abreviamos el identificador a 5 carácteres
+
+git diff <id  de archivo> <id  de archivo> : se compara los commit (muestra los  2 commit)
+
+git diff --name-only <id> : Nos muestra los nombres de los archivos que cambiaron
+
+git diff --word-diff <id> [se puede diferenciar entre 2 commit] : Nos muestra el contenido  que estaba antes y el contenido que se agregó en el  commit 
+
+git commit --amend : Cambiamos el mensaje del commit
+
+git rebase -i head~(numero): Va al commit del numero que se colocó (para poder editarlo)
+
+git reset --soft (id) : Va al commit del numero que se colocó (para poder editarlo), y los commit que estaban arriba se colocan en el area de stagen
+
+git add . : agrega todos los archivos
+
+git branch : Nos muestra las ramas creadas
+
+git branch <archivo> : Crea una copia del proyecto para trabajar (crea una rama)
+
+git checkout <rama> : Se usa para moverse entre las ramas 
+
+git checkout <rama> : Se usa para moverse entre las ramas 
+
+git switch <rama> : Se usa para moverse entre las ramas (usar este metodo mejor)
+
+git switch -c <rama> : Crea la rama y de una vez se posiciona en  esa rama
+
+git branch -d <rama> : elimina una rama (salir de la rama primero).
+
+git branch -m <rama a reemplazar> <reemplazo de la rama> : modifica el nombre de la rama desde otra rama
+
+git branch -m <rama-nueva> : Cambia el nombre de la rama en la que está 
+
+git merge optimize-sum-function : aplica los cambios de una rama a otra (para hacerlo hay que estar en la rama que se le va a aplicar el cambio) para deshacer los cambios(fusion de ramas) se usa git reset --hard <id de rama al que sele hizo el cambio>
+
+git log --oneline --all : Nos muestra todos los commit de todas las ramas
+
+git ls-tree -r --name-only <id del commit> : Nos muestra los nombres de los archivos del commit
+
+*.txt : va a ignorar todos los archivos .txt (esto se hace en .gitignore)
+
+!readme.txt : No ignora este archivo
+
+git config --global core.exlcudesfilefile E:<archivo> : incluye siempre un archivo en el git(cada vez que creemos un repositorio en git va leer ese archivo)
+
+git log --oneline --all --graph : Muestra el grafico de las ramas
+
+git reset --hard Head~<numero> :El head baja la cantidad de numero que se colocó y se elimina en donde estaba el hhead
+
+git reset --hard <id> : recuperamos el commit que se eliminó
+
+git reflog : Nos muestra el historial de commit 
+
+code . : Abre el vsc(editor) con la carpeta en la que está
+
+git clone <url> : clona el repositorio de github
+
+git push (origin <rama>)->no es necesario : Subiendo los archivos de la compu hacia el repo remoto
+
+git pull : Agrega el cambio que se hizo en el repo (origin) al repo local
+
+git fetch : nos muestra si hay un cambio en el repositorio remoto(nos lo muestra en git... para verlo en el area de trabajo hay que entrar a origin/master con --detach)
+
+touch <archivo> : crea un archivo
+
+git remote add origin <url> : agregando un nuevo repositorio remoto
+
+git remote -v : Nos muestra lo que podemos hacer con el repositorio remoto que agregamos
+
