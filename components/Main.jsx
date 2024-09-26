@@ -1,56 +1,120 @@
 import { useEffect, useState } from 'react';
 import {
-  Button,
   View,
   FlatList,
   ActivityIndicator,
   StyleSheet,
   ImageBackground,
-  StatusBar
+  TouchableHighlight
 } from 'react-native';
-import { Audio } from 'expo-av';
 import Musics from './Musics.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getPermission } from '../lib/files.js';
+import { getPermission, getSound } from '../lib/files.js';
 import * as MediaLibrary from 'expo-media-library';
-import { Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { Plane } from './Plane.jsx';
-import { createAudioApp, pauseAudio, } from '../lib/playAudio.js';
+import { createAudioApp, pauseAudio } from '../lib/playAudio.js';
 import Reproductor from './Reproductor.jsx';
+import { duration } from '../lib/duration.js';
+import { SearchIcon } from './Icons.jsx';
+import Search from './SearchAudio.jsx';
 export default function Main() {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [albums, setAlbums] = useState();
   const [pages, setPages] = useState(500);
   const [morePages, setMorePages] = useState(true);
-  const [loading, setLoading] = useState(true); //passar a false
+  const [loading, setLoading] = useState(true); //pasar a false
   const [reproductor, setReproductor] = useState(false);
   const [fileId, setFileId] = useState(null);
   const [fileAudio, setFileAudio] = useState(null);
   const [status, setStatus] = useState(true);
+  const [fileName, setFileName] = useState(null);
+  const [albumSound, setAlbumSound] = useState([]);
+  const [randomMode, setRandomMode] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
+  const [listAudio, setListAudio] = useState([]);
   const insets = useSafeAreaInsets();
   useEffect(() => {
     getPermission(permissionResponse, requestPermission).then((assets) => {
       setAlbums(assets);
+      setListAudio(assets);
+      setAlbumSound(
+        assets.map((obj) => {
+          return parseInt(obj.id);
+        })
+      );
     });
   }, [permissionResponse, requestPermission]);
+
   const handleFile = (id, render = true) => {
     setReproductor(render);
     setFileId(id);
   };
-  const createAudio = (uri) => {
-    if(fileAudio){
-      pauseAudio(fileAudio)
+
+  const createAudio = (uri, name) => {
+    setFileName(name);
+    if (fileAudio) {
+      pauseAudio(fileAudio);
     }
     createAudioApp(uri).then((file) => {
       setFileAudio(file);
     });
-    setStatus(false)
+    setStatus(false);
   };
-  const isPlaying = (state)=>{
-    setStatus(state)
-  }
+
+  const isPlaying = (state) => {
+    setStatus(state);
+  };
+
+  const changeSound = async (id) => {
+    const num = albumSound[albumSound.indexOf(id) + 1];
+    setFileId(num);
+    const objectSound = await getSound(num).then((assets) => {
+      createAudio(assets[0].uri, assets[0].filename);
+      return {
+        sound: assets[0],
+        seconds: duration(assets[0].duration),
+        num
+      };
+    });
+    return objectSound;
+  };
+
+  const randomList = (isRandom) => {
+    if (isRandom) {
+      setAlbumSound(albumSound.sort(() => Math.random() - 0.5));
+      setRandomMode(true);
+    } else {
+      setAlbumSound(albumSound.sort((a, b) => a - b));
+      setRandomMode(false);
+    }
+  };
+  const handleAlbums = (nameAudio) => {
+    const name = nameAudio.toLowerCase();
+    if (nameAudio) {
+      setAlbums(
+        listAudio.filter((obj) => obj.filename.toLowerCase().includes(name))
+      );
+    } else {
+      setAlbums(listAudio);
+    }
+  };
+  //console.log(isSearch);
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: '#ddd' },
+          headerTitle: 'PLAYMOON',
+          headerLeft: () => {},
+          headerRight: () => (
+            <TouchableHighlight onPress={() => setIsSearch(true)}>
+              <SearchIcon />
+            </TouchableHighlight>
+          ),
+          headerTintColor: '#000'
+        }}
+      />
       {reproductor && (
         <Reproductor
           fileId={fileId}
@@ -59,6 +123,10 @@ export default function Main() {
           fileAudio={fileAudio && fileAudio}
           isPlaying={isPlaying}
           status={status}
+          changeSound={changeSound}
+          randomList={randomList}
+          albumSound={albumSound && albumSound}
+          randomMode={randomMode}
         />
       )}
       <ImageBackground
@@ -66,20 +134,19 @@ export default function Main() {
         style={reproductor ? { display: 'none' } : styles.imgBack}
       >
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-          <Stack.Screen
-            options={{
-              headerStyle: { backgroundColor: '#ccc' },
-              headerTitle: 'PLAYMOON',
-              headerTintColor: '#000'
-            }}
-          />
-          <View className="p-2">
+          {isSearch && <Search albums={albums} handleAlbums={handleAlbums} />}
+          <View
+            className={isSearch ? 'p-1 pt-0 mb-4' : 'p-1 pt-0 pb-0'}
+            style={fileName && isSearch && styles.list}
+          >
             {albums ? (
               <>
-                <Plane fileAudio={fileAudio && fileAudio} isPlaying={isPlaying} status={status}/>
                 <FlatList
                   data={albums}
                   keyExtractor={(album) => album.id}
+                  onScroll={() => {
+                    setIsSearch(false);
+                  }}
                   //onEndReached={handleLoadMore}
                   //onEndReachedThreshold={0.5}
                   renderItem={({ item }) => (
@@ -97,6 +164,19 @@ export default function Main() {
           </View>
         </View>
       </ImageBackground>
+      {fileName && !reproductor && (
+        <TouchableHighlight onPress={() => setReproductor(true)}>
+          <Plane
+            fileAudio={fileAudio && fileAudio}
+            isPlaying={isPlaying}
+            status={status}
+            fileName={fileName && fileName}
+            albumSound={albumSound}
+            fileId={fileId}
+            changeSound={changeSound}
+          />
+        </TouchableHighlight>
+      )}
     </>
   );
 }
@@ -104,5 +184,8 @@ const styles = StyleSheet.create({
   imgBack: {
     flex: 1,
     ResizeMode: 'cover'
+  },
+  list: {
+    marginBottom: 84
   }
 });

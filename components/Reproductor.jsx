@@ -34,25 +34,29 @@ export default function Reproductor({
   createAudio,
   fileAudio,
   status,
-  isPlaying
+  isPlaying,
+  changeSound,
+  randomList,
+  albumSound,
+  randomMode
 }) {
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
   const [positionAudio, setPositionAudio] = useState(0);
-  const [albumsUri, setAlbumsUri] = useState();
   const [id, setId] = useState();
   const [state, setState] = useState(true);
-  const [randomMode, setRandomMode] = useState(false);
-  useEffect(()=>{
-    const backAction =()=>{
-        handleFile(id,false)
-        return true
-    }
+  useEffect(() => {
+    const backAction = () => {
+      handleFile(id, false);
+      return true;
+    };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress',backAction)
-    return ()=> backHandler.remove()
-},[])
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+    return () => backHandler.remove();
+  }, []);
   useEffect(() => {
     setId(parseInt(fileId));
     getSound(fileId).then((assets) => {
@@ -61,25 +65,14 @@ export default function Reproductor({
     });
   }, [fileId]);
 
-  useEffect(() => {
-    getPermission(permissionResponse, requestPermission).then((assets) => {
-      setAlbumsUri(
-        assets.map((obj) => {
-          return parseInt(obj.id);
-        })
-      );
-    });
-  }, [permissionResponse, fileId, requestPermission]);
-
   const pauseSound = () => {
     pauseAudio(fileAudio);
-    isPlaying(true)
+    isPlaying(true);
     clearInterval();
   };
-
   const playSound = () => {
     playAudio(fileAudio);
-    isPlaying(false)
+    isPlaying(false);
     setInterval(async () => {
       const currentStatus = await fileAudio.getStatusAsync();
       if (currentStatus.isPlaying) {
@@ -95,44 +88,30 @@ export default function Reproductor({
   };
 
   const backSound = () => {
-    setId(albumsUri[albumsUri.indexOf(id) - 1]);
+    setId(albumSound[albumSound.indexOf(id) - 1]);
     pauseSound();
     setPositionAudio(0);
-    const num = albumsUri[albumsUri.indexOf(id) - 1];
+    const num = albumSound[albumSound.indexOf(id) - 1];
     getSound(num).then((assets) => {
       setSound(assets[0]);
-      createAudio(assets[0].uri);
+      createAudio(assets[0].uri, assets[0].filename);
       setSeconds(duration(assets[0].duration));
     });
     setState(false);
-    isPlaying(false)
+    isPlaying(false);
   };
-  const changeSound = () => {
-    setId(albumsUri[albumsUri.indexOf(id) + 1]);
+
+  /*if (sound && duration(positionAudio) == seconds && state) {
     pauseSound();
-    setPositionAudio(0);
-    const num = albumsUri[albumsUri.indexOf(id) + 1];
-    getSound(num).then((assets) => {
-      setSound(assets[0]);
-      createAudio(assets[0].uri);
-      setSeconds(duration(assets[0].duration));
+    changeSound(id).then((obj) => {
+      setId(obj.num);
+      setSound(obj.sound);
+      setSeconds(obj.seconds);
+      setState(false);
+      isPlaying(false);
+      setPositionAudio(0);
     });
-    setState(false);
-    isPlaying(false)
-  };
-
-  if (sound && duration(positionAudio) == seconds && state) {
-    changeSound();
-  }
-
-  const randomList = () => {
-    setAlbumsUri(albumsUri.sort(() => Math.random() - 0.5));
-    setRandomMode(true);
-  };
-  const orderList = () => {
-    setAlbumsUri(albumsUri.sort((a, b) => a - b));
-    setRandomMode(false);
-  };
+  }*/
 
   return (
     <ImageBackground
@@ -145,7 +124,12 @@ export default function Reproductor({
             headerStyle: { backgroundColor: '#ddd' },
             headerTitle: 'Reproductor',
             headerLeft: () => (
-              <TouchableHighlight onPress={() => handleFile(id, false)}>
+              <TouchableHighlight
+                activeOpacity={0.7}
+                underlayColor="#222"
+                style={styles.icons}
+                onPress={() => handleFile(id, false)}
+              >
                 <BackIcon />
               </TouchableHighlight>
             ),
@@ -157,8 +141,8 @@ export default function Reproductor({
         </View>
         <View style={styles.contInterfaz}>
           <View style={styles.contText}>
-            <Text style={styles.textTitle}>
-              {sound && sound.filename.slice(0, 50)}...{' '}
+            <Text style={styles.textTitle} className='h-11'>
+              {sound && sound.filename}{' '}
             </Text>
           </View>
           <View style={styles.slider}>
@@ -190,7 +174,7 @@ export default function Reproductor({
                 }
               }
               onPress={() => {
-                randomMode ? orderList() : randomList();
+                randomMode ? randomList(false) : randomList(true);
               }}
             >
               <RandomIcon />
@@ -217,7 +201,15 @@ export default function Reproductor({
               underlayColor="#222"
               style={styles.icons}
               onPress={() => {
-                changeSound();
+                pauseSound();
+                changeSound(id).then((obj) => {
+                  setId(obj.num);
+                  setSound(obj.sound);
+                  setSeconds(obj.seconds);
+                  setState(false);
+                  isPlaying(false);
+                  setPositionAudio(0);
+                });
               }}
             >
               <RightIcon />
@@ -272,7 +264,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginLeft: 10,
     marginBottom: 15,
-    width: 200
+    width: 230
   },
   duration: {
     color: '#fff'
