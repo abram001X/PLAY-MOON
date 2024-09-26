@@ -3,6 +3,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Fontisto from '@expo/vector-icons/Fontisto';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export function PlayIcon(props) {
   return <AntDesign name="play" size={60} color="white" {...props} />;
@@ -33,5 +35,19 @@ export function BackIcon(props) {
 
 export function SearchIcon(props) {
   return <Fontisto name="search" size={24} color="black" {...props}/> 
+}
 
+
+export function MusicIcon(props) {
+  return <MaterialIcons name="music-note" size={24} color="black" {...props}/>
+ 
+}
+
+export function DownloadIcon(props) {
+  
+  return <Fontisto name="download" size={24} color="black" {...props}/>
+}
+export function PlayListIcon(props) {
+  
+  return <MaterialCommunityIcons name="playlist-music" size={24} color="black" {...props}/>
 }

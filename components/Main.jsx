@@ -29,7 +29,7 @@ export default function Main() {
   const [fileAudio, setFileAudio] = useState(null);
   const [status, setStatus] = useState(true);
   const [fileName, setFileName] = useState(null);
-  const [albumSound, setAlbumSound] = useState([]);
+  const [albumSound, setAlbumSound] = useState([]);//<---ojo
   const [randomMode, setRandomMode] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const [listAudio, setListAudio] = useState([]);
@@ -45,10 +45,10 @@ export default function Main() {
       );
     });
   }, [permissionResponse, requestPermission]);
-
   const handleFile = (id, render = true) => {
+    const num = id
     setReproductor(render);
-    setFileId(id);
+    setFileId(num);
   };
 
   const createAudio = (uri, name) => {
@@ -99,25 +99,13 @@ export default function Main() {
       setAlbums(listAudio);
     }
   };
+  //console.log(fileId)
   //console.log(isSearch);
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerStyle: { backgroundColor: '#ddd' },
-          headerTitle: 'PLAYMOON',
-          headerLeft: () => {},
-          headerRight: () => (
-            <TouchableHighlight onPress={() => setIsSearch(true)}>
-              <SearchIcon />
-            </TouchableHighlight>
-          ),
-          headerTintColor: '#000'
-        }}
-      />
       {reproductor && (
         <Reproductor
-          fileId={fileId}
+          fileId={parseInt(fileId)}
           handleFile={handleFile}
           createAudio={createAudio}
           fileAudio={fileAudio && fileAudio}
@@ -134,7 +122,7 @@ export default function Main() {
         style={reproductor ? { display: 'none' } : styles.imgBack}
       >
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-          {isSearch && <Search albums={albums} handleAlbums={handleAlbums} />}
+           <Search albums={albums} handleAlbums={handleAlbums} />
           <View
             className={isSearch ? 'p-1 pt-0 mb-4' : 'p-1 pt-0 pb-0'}
             style={fileName && isSearch && styles.list}
@@ -165,17 +153,16 @@ export default function Main() {
         </View>
       </ImageBackground>
       {fileName && !reproductor && (
-        <TouchableHighlight onPress={() => setReproductor(true)}>
           <Plane
             fileAudio={fileAudio && fileAudio}
             isPlaying={isPlaying}
             status={status}
             fileName={fileName && fileName}
             albumSound={albumSound}
-            fileId={fileId}
+            fileId={parseInt(fileId)}
             changeSound={changeSound}
+            handleFile={handleFile}
           />
-        </TouchableHighlight>
       )}
     </>
   );

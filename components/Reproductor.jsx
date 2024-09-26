@@ -43,11 +43,11 @@ export default function Reproductor({
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
   const [positionAudio, setPositionAudio] = useState(0);
-  const [id, setId] = useState();
+  const [id, setId] = useState(fileId);
   const [state, setState] = useState(true);
   useEffect(() => {
     const backAction = () => {
-      handleFile(id, false);
+      handleFile(fileId, false);
       return true;
     };
 
@@ -56,15 +56,14 @@ export default function Reproductor({
       backAction
     );
     return () => backHandler.remove();
-  }, []);
+  }, [fileId]);
   useEffect(() => {
-    setId(parseInt(fileId));
+    setId(fileId);
     getSound(fileId).then((assets) => {
       setSound(assets[0]);
       setSeconds(duration(assets[0].duration));
     });
   }, [fileId]);
-
   const pauseSound = () => {
     pauseAudio(fileAudio);
     isPlaying(true);
@@ -141,7 +140,7 @@ export default function Reproductor({
         </View>
         <View style={styles.contInterfaz}>
           <View style={styles.contText}>
-            <Text style={styles.textTitle} className='h-11'>
+            <Text style={styles.textTitle} className="h-11">
               {sound && sound.filename}{' '}
             </Text>
           </View>
@@ -202,8 +201,8 @@ export default function Reproductor({
               style={styles.icons}
               onPress={() => {
                 pauseSound();
-                changeSound(id).then((obj) => {
-                  setId(obj.num);
+                changeSound(fileId).then((obj) => {
+                  //setId(parseInt(obj.num));
                   setSound(obj.sound);
                   setSeconds(obj.seconds);
                   setState(false);

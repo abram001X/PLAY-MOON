@@ -6,7 +6,7 @@ export default function Musics({ album, handleFile, createAudio }) {
     <Pressable
       onPress={() => {
         createAudio(album.uri, album.filename);
-        handleFile(album.id);
+        handleFile(parseInt(album.id));
       }}
     >
       <View key={album.id} className="flex-row  p-2 pl-0">
