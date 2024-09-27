@@ -10,10 +10,11 @@ export default function Search({ handleAlbums }) {
       <TextInput
         className="h-11 p-3 flex-1 text-black"
         placeholder="Buscar"
-        
-        onChangeText={(text) => {handleAlbums(text)}}
+        onChangeText={(text) => {
+          handleAlbums(text);
+        }}
       />
-      <SearchIcon/>
+      <SearchIcon />
     </View>
   );
 }

@@ -26,28 +26,31 @@ export function RepeatIcon(props) {
 }
 
 export function PauseIcon(props) {
-  return <AntDesign name="pausecircle" size={60} color="white" {...props}/>
+  return <AntDesign name="pausecircle" size={60} color="white" {...props} />;
 }
 
 export function BackIcon(props) {
-  return <Ionicons name="arrow-back" size={24} color="black" {...props}/>
+  return <Ionicons name="arrow-back" size={24} color="black" {...props} />;
 }
 
 export function SearchIcon(props) {
-  return <Fontisto name="search" size={24} color="black" {...props}/> 
+  return <Fontisto name="search" size={24} color="black" {...props} />;
 }
 
-
 export function MusicIcon(props) {
-  return <MaterialIcons name="music-note" size={24} color="black" {...props}/>
- 
+  return <MaterialIcons name="music-note" size={24} color="black" {...props} />;
 }
 
 export function DownloadIcon(props) {
-  
-  return <Fontisto name="download" size={24} color="black" {...props}/>
+  return <Fontisto name="download" size={24} color="black" {...props} />;
 }
 export function PlayListIcon(props) {
-  
-  return <MaterialCommunityIcons name="playlist-music" size={24} color="black" {...props}/>
+  return (
+    <MaterialCommunityIcons
+      name="playlist-music"
+      size={24}
+      color="black"
+      {...props}
+    />
+  );
 }

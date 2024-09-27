@@ -29,7 +29,7 @@ export default function Main() {
   const [fileAudio, setFileAudio] = useState(null);
   const [status, setStatus] = useState(true);
   const [fileName, setFileName] = useState(null);
-  const [albumSound, setAlbumSound] = useState([]);//<---ojo
+  const [albumSound, setAlbumSound] = useState([]); //<---ojo
   const [randomMode, setRandomMode] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const [listAudio, setListAudio] = useState([]);
@@ -46,7 +46,7 @@ export default function Main() {
     });
   }, [permissionResponse, requestPermission]);
   const handleFile = (id, render = true) => {
-    const num = id
+    const num = id;
     setReproductor(render);
     setFileId(num);
   };
@@ -122,7 +122,7 @@ export default function Main() {
         style={reproductor ? { display: 'none' } : styles.imgBack}
       >
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-           <Search albums={albums} handleAlbums={handleAlbums} />
+          <Search albums={albums} handleAlbums={handleAlbums} />
           <View
             className={isSearch ? 'p-1 pt-0 mb-4' : 'p-1 pt-0 pb-0'}
             style={fileName && isSearch && styles.list}
@@ -153,16 +153,16 @@ export default function Main() {
         </View>
       </ImageBackground>
       {fileName && !reproductor && (
-          <Plane
-            fileAudio={fileAudio && fileAudio}
-            isPlaying={isPlaying}
-            status={status}
-            fileName={fileName && fileName}
-            albumSound={albumSound}
-            fileId={parseInt(fileId)}
-            changeSound={changeSound}
-            handleFile={handleFile}
-          />
+        <Plane
+          fileAudio={fileAudio && fileAudio}
+          isPlaying={isPlaying}
+          status={status}
+          fileName={fileName && fileName}
+          albumSound={albumSound}
+          fileId={parseInt(fileId)}
+          changeSound={changeSound}
+          handleFile={handleFile}
+        />
       )}
     </>
   );
