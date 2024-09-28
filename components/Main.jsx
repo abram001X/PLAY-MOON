@@ -175,7 +175,10 @@ export default function Main() {
   } else {
     return (
       <>
-        <ImageBackground source={require('../assets/fondo.jpeg')}>
+        <ImageBackground
+          source={require('../assets/fondo.jpeg')}
+          style={styles.imgBack}
+        >
           <View
             style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
           >
@@ -207,6 +210,7 @@ export default function Main() {
             </View>
           </View>
         </ImageBackground>
+        {fileName && (
           <Plane
             fileAudio={fileAudio && fileAudio}
             isPlaying={isPlaying}
@@ -218,6 +222,7 @@ export default function Main() {
             handleFile={handleFile}
             positionAudio={positionAudio}
           />
+        )}
       </>
     );
   }
