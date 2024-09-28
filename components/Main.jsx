@@ -78,8 +78,6 @@ export default function Main() {
         const currentStatus = await file.getStatusAsync();
         if (currentStatus.isPlaying) {
           setPositionAudio(currentStatus.positionMillis / 1000);
-          //console.log(minutes, 'Minutes true');
-          //console.log(positionAudio, 'seconds true');
         }
       }, 500);
     } else if (num) {
@@ -87,8 +85,6 @@ export default function Main() {
         const currentStatus = await file.getStatusAsync();
         if (currentStatus.isPlaying) {
           setPositionAudio(currentStatus.positionMillis / 1000);
-          //console.log(num, 'Minutes');
-         // console.log(positionAudio, 'seconds');
         }
       }, 500);
     }
@@ -132,7 +128,6 @@ export default function Main() {
   };
   if (positionAudio >= parseInt(minutes) - 0.5) {
     setPositionAudio(0);
-    console.log('okk');
     changeSound(fileId);
   }
   const randomList = (isRandom) => {
@@ -156,12 +151,10 @@ export default function Main() {
     }
   };
 
-  //console.log(fileId)
   //console.log(isSearch);
-
-  return (
-    <>
-      {reproductor && (
+  if (reproductor) {
+    return (
+      <>
         <Reproductor
           fileId={parseInt(fileId)}
           handleFile={handleFile}
@@ -177,55 +170,57 @@ export default function Main() {
           positionAudio={positionAudio}
           rangeProcess={rangeProcess}
         />
-      )}
-      <ImageBackground
-        source={require('../assets/fondo.jpeg')}
-        style={reproductor ? { display: 'none' } : styles.imgBack}
-      >
-        <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-          <Search albums={albums} handleAlbums={handleAlbums} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <ImageBackground source={require('../assets/fondo.jpeg')}>
           <View
-            className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
-            style={fileName && isSearch && styles.list}
+            style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
           >
-            {albums ? (
-              <>
-                <FlatList
-                  data={albums}
-                  keyExtractor={(album) => album.id}
-                  //onEndReached={handleLoadMore}
-                  //onEndReachedThreshold={0.5}
-                  renderItem={({ item }) => (
-                    <Musics
-                      album={item}
-                      handleFile={handleFile}
-                      createAudio={createAudio}
-                      handlePosition={handlePosition}
-                    />
-                  )}
-                />
-              </>
-            ) : (
-              <ActivityIndicator />
-            )}
+            <Search albums={albums} handleAlbums={handleAlbums} />
+            <View
+              className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
+              style={fileName && isSearch && styles.list}
+            >
+              {albums ? (
+                <>
+                  <FlatList
+                    data={albums}
+                    keyExtractor={(album) => album.id}
+                    //onEndReached={handleLoadMore}
+                    //onEndReachedThreshold={0.5}
+                    renderItem={({ item }) => (
+                      <Musics
+                        album={item}
+                        handleFile={handleFile}
+                        createAudio={createAudio}
+                        handlePosition={handlePosition}
+                      />
+                    )}
+                  />
+                </>
+              ) : (
+                <ActivityIndicator />
+              )}
+            </View>
           </View>
-        </View>
-      </ImageBackground>
-      {fileName && !reproductor && (
-        <Plane
-          fileAudio={fileAudio && fileAudio}
-          isPlaying={isPlaying}
-          status={status}
-          fileName={fileName && fileName}
-          albumSound={albumSound}
-          fileId={parseInt(fileId)}
-          changeSound={changeSound}
-          handleFile={handleFile}
-          positionAudio={positionAudio}
-        />
-      )}
-    </>
-  );
+        </ImageBackground>
+          <Plane
+            fileAudio={fileAudio && fileAudio}
+            isPlaying={isPlaying}
+            status={status}
+            fileName={fileName && fileName}
+            albumSound={albumSound}
+            fileId={parseInt(fileId)}
+            changeSound={changeSound}
+            handleFile={handleFile}
+            positionAudio={positionAudio}
+          />
+      </>
+    );
+  }
 }
 const styles = StyleSheet.create({
   imgBack: {

@@ -3,14 +3,12 @@ import {
   Image,
   StyleSheet,
   View,
-  Button,
   Text,
   ImageBackground,
   TouchableHighlight,
   Pressable,
   BackHandler
 } from 'react-native';
-import { Link, Stack } from 'expo-router';
 import {
   LeftIcon,
   PlayIcon,
@@ -18,14 +16,11 @@ import {
   RepeatIcon,
   RightIcon,
   PauseIcon,
-  BackIcon
 } from './Icons';
 import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
 import { getPermission, getSound } from '../lib/files';
 import { duration } from '../lib/duration';
-import { Audio } from 'expo-av';
-import * as MediaLibrary from 'expo-media-library';
 import { pauseAudio, playAudio } from '../lib/playAudio';
 
 export default function Reproductor({
@@ -96,15 +91,15 @@ export default function Reproductor({
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
       style={styles.imgBack}
-    >
-      <View style={styles.contSound}>
+    >{
+      sound && <View style={styles.contSound}>
         <View style={styles.contImg}>
           <Image source={LogoPro} style={styles.img} />
         </View>
         <View style={styles.contInterfaz}>
           <View style={styles.contText}>
             <Text style={styles.textTitle} className="h-11">
-              {sound && sound.filename}{' '}
+              {sound.filename}{' '}
             </Text>
           </View>
           <View style={styles.slider}>
@@ -112,7 +107,7 @@ export default function Reproductor({
               minimumTrackTintColor="#18f"
               maximumTrackTintColor="#fff"
               minimumValue={0}
-              maximumValue={sound && sound.duration}
+              maximumValue={sound.duration}
               value={positionAudio}
               onValueChange={(value) => updatePositionSound(value[0])}
             />
@@ -183,7 +178,7 @@ export default function Reproductor({
             <RepeatIcon />
           </View>
         </View>
-      </View>
+      </View>}
     </ImageBackground>
   );
 }
