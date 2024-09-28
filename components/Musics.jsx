@@ -1,11 +1,18 @@
 import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-export default function Musics({ album, handleFile, createAudio }) {
+
+export default function Musics({
+  album,
+  handleFile,
+  handlePosition,
+  createAudio,
+}) {
   return (
     <Pressable
       onPress={() => {
-        createAudio(album.uri, album.filename);
+        handlePosition(0,album.duration);
+        createAudio(album.uri, album.filename,album.duration);
         handleFile(parseInt(album.id));
       }}
     >

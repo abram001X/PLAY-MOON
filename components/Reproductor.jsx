@@ -30,20 +30,21 @@ import { pauseAudio, playAudio } from '../lib/playAudio';
 
 export default function Reproductor({
   fileId,
+  positionAudio,
   handleFile,
-  createAudio,
   fileAudio,
   status,
   isPlaying,
   changeSound,
   randomList,
   albumSound,
-  randomMode
+  randomMode,
+  backSound,
+  handlePosition,
+  rangeProcess
 }) {
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
-  const [positionAudio, setPositionAudio] = useState(0);
-  const [id, setId] = useState(fileId);
   const [state, setState] = useState(true);
   useEffect(() => {
     const backAction = () => {
@@ -58,7 +59,6 @@ export default function Reproductor({
     return () => backHandler.remove();
   }, [fileId]);
   useEffect(() => {
-    setId(fileId);
     getSound(fileId).then((assets) => {
       setSound(assets[0]);
       setSeconds(duration(assets[0].duration));
@@ -72,32 +72,12 @@ export default function Reproductor({
   const playSound = () => {
     playAudio(fileAudio);
     isPlaying(false);
-    setInterval(async () => {
-      const currentStatus = await fileAudio.getStatusAsync();
-      if (currentStatus.isPlaying) {
-        setPositionAudio(currentStatus.positionMillis / 1000);
-      }
-      setState(true);
-    }, 800);
+    rangeProcess(fileAudio);
   };
 
   const updatePositionSound = async (position) => {
     const positionSound = await fileAudio.setPositionAsync(position * 1000);
-    setPositionAudio(positionSound.positionMillis / 1000);
-  };
-
-  const backSound = () => {
-    setId(albumSound[albumSound.indexOf(id) - 1]);
-    pauseSound();
-    setPositionAudio(0);
-    const num = albumSound[albumSound.indexOf(id) - 1];
-    getSound(num).then((assets) => {
-      setSound(assets[0]);
-      createAudio(assets[0].uri, assets[0].filename);
-      setSeconds(duration(assets[0].duration));
-    });
-    setState(false);
-    isPlaying(false);
+    handlePosition(positionSound.positionMillis / 1000,sound.duration);
   };
 
   /*if (sound && duration(positionAudio) == seconds && state) {
@@ -118,23 +98,6 @@ export default function Reproductor({
       style={styles.imgBack}
     >
       <View style={styles.contSound}>
-        <Stack.Screen
-          options={{
-            headerStyle: { backgroundColor: '#ddd' },
-            headerTitle: 'Reproductor',
-            headerLeft: () => (
-              <TouchableHighlight
-                activeOpacity={0.7}
-                underlayColor="#222"
-                style={styles.icons}
-                onPress={() => handleFile(id, false)}
-              >
-                <BackIcon />
-              </TouchableHighlight>
-            ),
-            headerTintColor: '#000'
-          }}
-        />
         <View style={styles.contImg}>
           <Image source={LogoPro} style={styles.img} />
         </View>
@@ -183,7 +146,13 @@ export default function Reproductor({
               underlayColor="#222"
               style={styles.icons}
               onPress={() => {
-                backSound();
+                pauseSound();
+                backSound(fileId).then((obj) => {
+                  setSound(obj.sound);
+                  setSeconds(obj.seconds);
+                  setState(false);
+                  isPlaying(false);
+                });
               }}
             >
               <LeftIcon />
@@ -202,12 +171,10 @@ export default function Reproductor({
               onPress={() => {
                 pauseSound();
                 changeSound(fileId).then((obj) => {
-                  //setId(parseInt(obj.num));
                   setSound(obj.sound);
                   setSeconds(obj.seconds);
                   setState(false);
                   isPlaying(false);
-                  setPositionAudio(0);
                 });
               }}
             >

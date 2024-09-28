@@ -9,6 +9,7 @@ import {
 import { PlayIcon, PauseIcon, RightIcon } from './Icons';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { pauseAudio, playAudio } from '../lib/playAudio';
+import { duration } from '../lib/duration';
 export function Plane({
   fileAudio,
   isPlaying,
@@ -16,7 +17,8 @@ export function Plane({
   fileName,
   fileId,
   changeSound,
-  handleFile
+  handleFile,
+  positionAudio
 }) {
 
   return (
@@ -31,6 +33,7 @@ export function Plane({
           <Text className="text-white max-h-8 mr-5">
             {fileName && fileName}
           </Text>
+          <Text className='text-yellow-400'>{duration(positionAudio)}</Text>
         </View>
         <View className="flex-row justify-between flex-1">
           <Pressable

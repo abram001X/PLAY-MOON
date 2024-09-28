@@ -31,8 +31,10 @@ export default function Main() {
   const [fileName, setFileName] = useState(null);
   const [albumSound, setAlbumSound] = useState([]); //<---ojo
   const [randomMode, setRandomMode] = useState(false);
-  const [isSearch, setIsSearch] = useState(false);
+  const [isSearch, setIsSearch] = useState(true);
   const [listAudio, setListAudio] = useState([]);
+  const [positionAudio, setPositionAudio] = useState(0);
+  const [minutes, setMinutes] = useState(null);
   const insets = useSafeAreaInsets();
   useEffect(() => {
     getPermission(permissionResponse, requestPermission).then((assets) => {
@@ -45,31 +47,63 @@ export default function Main() {
       );
     });
   }, [permissionResponse, requestPermission]);
+
   const handleFile = (id, render = true) => {
     const num = id;
-    setReproductor(render);
     setFileId(num);
+    setReproductor(render);
   };
 
-  const createAudio = (uri, name) => {
+  const handlePosition = (range, num) => {
+    setMinutes(num);
+    setPositionAudio(range);
+  };
+
+  const createAudio = (uri, name, num) => {
+    setMinutes(num && num);
     setFileName(name);
     if (fileAudio) {
       pauseAudio(fileAudio);
     }
     createAudioApp(uri).then((file) => {
       setFileAudio(file);
+      rangeProcess(file, num);
     });
     setStatus(false);
   };
 
+  const rangeProcess = (file, num) => {
+    if (minutes) {
+      setInterval(async () => {
+        const currentStatus = await file.getStatusAsync();
+        if (currentStatus.isPlaying) {
+          setPositionAudio(currentStatus.positionMillis / 1000);
+          //console.log(minutes, 'Minutes true');
+          //console.log(positionAudio, 'seconds true');
+        }
+      }, 500);
+    } else if (num) {
+      setInterval(async () => {
+        const currentStatus = await file.getStatusAsync();
+        if (currentStatus.isPlaying) {
+          setPositionAudio(currentStatus.positionMillis / 1000);
+          //console.log(num, 'Minutes');
+         // console.log(positionAudio, 'seconds');
+        }
+      }, 500);
+    }
+  };
   const isPlaying = (state) => {
     setStatus(state);
   };
 
-  const changeSound = async (id) => {
-    const num = albumSound[albumSound.indexOf(id) + 1];
+  const backSound = async (id) => {
+    clearInterval();
+    setPositionAudio(0);
+    const num = albumSound[albumSound.indexOf(id) - 1];
     setFileId(num);
     const objectSound = await getSound(num).then((assets) => {
+      setMinutes(assets[0].duration);
       createAudio(assets[0].uri, assets[0].filename);
       return {
         sound: assets[0],
@@ -80,6 +114,27 @@ export default function Main() {
     return objectSound;
   };
 
+  const changeSound = async (id) => {
+    clearInterval();
+    const num = albumSound[albumSound.indexOf(id) + 1];
+    setFileId(num);
+    const objectSound = await getSound(num).then((assets) => {
+      createAudio(assets[0].uri, assets[0].filename);
+      setMinutes(assets[0].duration);
+      setPositionAudio(0);
+      return {
+        sound: assets[0],
+        seconds: duration(assets[0].duration),
+        num
+      };
+    });
+    return objectSound;
+  };
+  if (positionAudio >= parseInt(minutes) - 0.5) {
+    setPositionAudio(0);
+    console.log('okk');
+    changeSound(fileId);
+  }
   const randomList = (isRandom) => {
     if (isRandom) {
       setAlbumSound(albumSound.sort(() => Math.random() - 0.5));
@@ -89,6 +144,7 @@ export default function Main() {
       setRandomMode(false);
     }
   };
+
   const handleAlbums = (nameAudio) => {
     const name = nameAudio.toLowerCase();
     if (nameAudio) {
@@ -99,15 +155,16 @@ export default function Main() {
       setAlbums(listAudio);
     }
   };
+
   //console.log(fileId)
   //console.log(isSearch);
+
   return (
     <>
       {reproductor && (
         <Reproductor
           fileId={parseInt(fileId)}
           handleFile={handleFile}
-          createAudio={createAudio}
           fileAudio={fileAudio && fileAudio}
           isPlaying={isPlaying}
           status={status}
@@ -115,6 +172,10 @@ export default function Main() {
           randomList={randomList}
           albumSound={albumSound && albumSound}
           randomMode={randomMode}
+          backSound={backSound}
+          handlePosition={handlePosition}
+          positionAudio={positionAudio}
+          rangeProcess={rangeProcess}
         />
       )}
       <ImageBackground
@@ -124,7 +185,7 @@ export default function Main() {
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
           <Search albums={albums} handleAlbums={handleAlbums} />
           <View
-            className={isSearch ? 'p-1 pt-0 mb-4' : 'p-1 pt-0 pb-0'}
+            className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
             style={fileName && isSearch && styles.list}
           >
             {albums ? (
@@ -132,9 +193,6 @@ export default function Main() {
                 <FlatList
                   data={albums}
                   keyExtractor={(album) => album.id}
-                  onScroll={() => {
-                    setIsSearch(false);
-                  }}
                   //onEndReached={handleLoadMore}
                   //onEndReachedThreshold={0.5}
                   renderItem={({ item }) => (
@@ -142,6 +200,7 @@ export default function Main() {
                       album={item}
                       handleFile={handleFile}
                       createAudio={createAudio}
+                      handlePosition={handlePosition}
                     />
                   )}
                 />
@@ -162,6 +221,7 @@ export default function Main() {
           fileId={parseInt(fileId)}
           changeSound={changeSound}
           handleFile={handleFile}
+          positionAudio={positionAudio}
         />
       )}
     </>
