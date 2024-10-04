@@ -1,7 +1,7 @@
 {
   "name": "reproductor-mp3-app",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -35,7 +35,8 @@
     "react-native-sound": "^0.11.2",
     "react-native-svg": "15.2.0",
     "react-native-web": "~0.19.10",
-    "rn-fetch-blob": "^0.12.0"
+    "rn-fetch-blob": "^0.12.0",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

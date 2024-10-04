@@ -1,20 +1,16 @@
-import { Stack, Link } from 'expo-router';
 import { Pressable, TouchableHighlight } from 'react-native';
 import { PlayListIcon, SearchIcon } from '../components/Icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Main from '../components/Main';
+
+const Stack = createNativeStackNavigator()
 export default function Layout() {
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: '#ddd' },
-        headerTitle: 'PLAYMOON',
-        headerRight: () => (
-          <Link asChild href="/playlist">
-            <TouchableHighlight activeOpacity={0.9} underlayColor="#999" className='p-5'  style={{borderRadius:50}}>
-              <PlayListIcon />
-            </TouchableHighlight>
-          </Link>
-        )
-      }}
-    />
-  );
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Main}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  )  
 }

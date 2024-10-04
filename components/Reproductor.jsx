@@ -23,59 +23,44 @@ import { duration } from '../lib/duration';
 import {
   pauseAudio,
   playAudio,
-  getSound
+  getSound,
+  updatePositionSound
 } from '../lib/playAudio';
+import { useSound } from '../lib/zustand';
 
 export default function Reproductor({
-  fileId,
-  positionAudio,
-  handleFile,
-  fileAudio,
-  status,
   isPlaying,
   changeSound,
   randomList,
-  albumSound,
   randomMode,
   backSound,
-  handlePosition,
-  rangeProcess
+  route
 }) {
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
   const [state, setState] = useState(true);
-  useEffect(() => {
-    const backAction = () => {
-      handleFile(fileId, false);
-      return true;
-    };
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-    return () => backHandler.remove();
-  }, [fileId]);
+  const { fileAudio, assets, addAudioAssets, updateAlbumRandom } = useSound();
+  //console.log(fileAudio)
+  const { filename, durationAudio, id } = route.params;
+
   useEffect(() => {
-    getSound(fileId).then((assets) => {
-      setSound(assets[0]);
-      setSeconds(duration(assets[0].duration));
+    setSound({
+      id,
+      filename,
+      duration: durationAudio
     });
-  }, [fileId]);
+  }, []);
+
   const pauseSound = () => {
     pauseAudio(fileAudio);
-    isPlaying(true);
+    addAudioAssets({ ...assets, isPlaying: true });
     clearInterval();
   };
   const playSound = () => {
     playAudio(fileAudio);
-    isPlaying(false);
-    rangeProcess(fileAudio);
-  };
-
-  const updatePositionSound = async (position) => {
-    const positionSound = await fileAudio.setPositionAsync(position * 1000);
-    handlePosition(positionSound.positionMillis / 1000, sound.duration);
+    addAudioAssets({ ...assets, isPlaying: false });
+    //rangeProcess(fileAudio);
   };
 
   return (
@@ -83,7 +68,7 @@ export default function Reproductor({
       source={require('../assets/fondo.jpeg')}
       style={styles.imgBack}
     >
-      {sound && (
+      {assets && sound && (
         <View style={styles.contSound}>
           <View style={styles.contImg}>
             <Image source={LogoPro} style={styles.img} />
@@ -99,9 +84,13 @@ export default function Reproductor({
                 minimumTrackTintColor="#18f"
                 maximumTrackTintColor="#fff"
                 minimumValue={0}
-                maximumValue={sound.duration}
-                value={positionAudio}
-                onValueChange={(value) => updatePositionSound(value[0])}
+                maximumValue={assets.duration}
+                value={assets.position}
+                onValueChange={(value) =>
+                  updatePositionSound(value[0]).then((position) => {
+                    addAudioAssets({ ...assets, position: position });
+                  })
+                }
               />
               <View
                 style={{
@@ -110,9 +99,9 @@ export default function Reproductor({
                 }}
               >
                 <Text style={{ color: '#fff' }}>
-                  {duration(positionAudio)}{' '}
+                  {assets.position && duration(assets.position)}
                 </Text>
-                <Text style={styles.duration}>{seconds && seconds} </Text>
+                <Text style={styles.duration}>{duration(sound.duration)} </Text>
               </View>
             </View>
 
@@ -128,7 +117,15 @@ export default function Reproductor({
                   }
                 }
                 onPress={() => {
-                  randomMode ? randomList(false) : randomList(true);
+                  assets.isRandom
+                    ? randomList(false).then(({ albumRandom, isRandom }) => {
+                        updateAlbumRandom(albumRandom);
+                        addAudioAssets({ ...assets, isRandom: isRandom });
+                      })
+                    : randomList(true).then(({ albumRandom, isRandom }) => {
+                        updateAlbumRandom(albumRandom);
+                        addAudioAssets({ ...assets, isRandom: isRandom });
+                      });
                 }}
               >
                 <RandomIcon />
@@ -151,10 +148,10 @@ export default function Reproductor({
               </TouchableHighlight>
               <Pressable
                 onPress={() => {
-                  status ? playSound() : pauseSound();
+                  assets.isPlaying ? playSound() : pauseSound();
                 }}
               >
-                {!status ? <PauseIcon /> : <PlayIcon />}
+                {!assets.isPlaying ? <PauseIcon /> : <PlayIcon />}
               </Pressable>
               <TouchableHighlight
                 activeOpacity={0.7}

@@ -1,19 +1,33 @@
 import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
+import { useSound } from '../lib/zustand';
+import { createAudioApp } from '../lib/playAudio';
 
-export default function Musics({
-  album,
-  handleFile,
-  handlePosition,
-  createAudio,
-}) {
+export default function Musics({ album, createAudio, navigation }) {
+  const { file, addSound, assets, addAudioAssets } = useSound();
   return (
     <Pressable
       onPress={() => {
-        handlePosition(0,album.duration);
-        createAudio(album.uri, album.filename,album.duration);
-        handleFile(parseInt(album.id));
+        //handlePosition(0,album.duration);
+        createAudioApp(album.uri).then((file) => {
+          addSound(file);
+          addAudioAssets({
+            ...assets,
+            id: album.id,
+            uri: album.uri,
+            duration: album.duration,
+            position: 0,
+            filename: album.filename,
+            isPlaying: false
+          });
+        });
+        //handleFile(parseInt(album.id));*/
+        navigation.navigate('Reproductor', {
+          filename: album.filename,
+          id: album.id,
+          durationAudio: album.duration
+        });
       }}
     >
       <View key={album.id} className="flex-row  p-2 pl-0">

@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ImageBackground,
   ScrollView,
-  VirtualizedList
+  VirtualizedList,
+  Button
 } from 'react-native';
 import Musics from './Musics.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -31,34 +32,15 @@ export default function Main({
   rangeProcess,
   reproductor,
   isSearch,
-  fileName
+  fileName,
+  navigation
 }) {
   const insets = useSafeAreaInsets();
 
   const getItem = (_data, index) => albums[index];
-  const getItemCount = (_data) => 200;
+  const getItemCount = (_data) => 20;
   //console.log(isSearch);
-  if (reproductor) {
-    return (
-      <>
-        <Reproductor
-          fileId={parseInt(fileId)}
-          handleFile={handleFile}
-          fileAudio={fileAudio && fileAudio}
-          isPlaying={isPlaying}
-          status={status}
-          changeSound={changeSound}
-          randomList={randomList}
-          albumSound={albumSound && albumSound}
-          randomMode={randomMode}
-          backSound={backSound}
-          handlePosition={handlePosition}
-          positionAudio={positionAudio}
-          rangeProcess={rangeProcess}
-        />
-      </>
-    );
-  } else {
+  
     return (
       <>
         <ImageBackground
@@ -83,6 +65,7 @@ export default function Main({
                         handleFile={handleFile}
                         createAudio={createAudio}
                         handlePosition={handlePosition}
+                        navigation={navigation}
                       />
                     )}
                     keyExtractor={(item) => item.id}
@@ -98,7 +81,6 @@ export default function Main({
         </ImageBackground>
       </>
     );
-  }
 }
 /*
 <FlatList
