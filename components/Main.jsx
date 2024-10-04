@@ -14,23 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Reproductor from './Reproductor.jsx';
 import Search from './SearchAudio.jsx';
 export default function Main({
-  fileId,
   albums,
   handleAlbums,
-  createAudio,
-  handleFile,
-  fileAudio,
-  isPlaying,
-  status,
-  changeSound,
-  randomList,
-  albumSound,
-  randomMode,
-  backSound,
-  handlePosition,
-  positionAudio,
-  rangeProcess,
-  reproductor,
   isSearch,
   fileName,
   navigation
@@ -38,26 +23,46 @@ export default function Main({
   const insets = useSafeAreaInsets();
 
   const getItem = (_data, index) => albums[index];
-  const getItemCount = (_data) => 20;
+  const getItemCount = (_data) => 100;
   //console.log(isSearch);
-  
-    return (
-      <>
-        <ImageBackground
-          source={require('../assets/fondo.jpeg')}
-          style={styles.imgBack}
-        >
+
+  return (
+    <>
+      <ImageBackground
+        source={require('../assets/fondo.jpeg')}
+        style={styles.imgBack}
+      >
+        <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+          <Search albums={albums} handleAlbums={handleAlbums} />
           <View
-            style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+            className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
+            style={fileName && isSearch && styles.list}
           >
-            <Search albums={albums} handleAlbums={handleAlbums} />
-            <View
-              className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
-              style={fileName && isSearch && styles.list}
-            >
-              {albums ? (
-                <>
-                  <VirtualizedList
+            {albums ? (
+              <>
+                <ScrollView>
+                  {albums.map((item) => {
+                    return (
+                      <Musics
+                        key={item.id}
+                        album={item}
+                        navigation={navigation}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </>
+            ) : (
+              <ActivityIndicator />
+            )}
+          </View>
+        </View>
+      </ImageBackground>
+    </>
+  );
+}
+/*
+<VirtualizedList
                     initialNumToRender={15}
                     renderItem={({ item }) => (
                       <Musics
@@ -72,17 +77,6 @@ export default function Main({
                     getItemCount={getItemCount}
                     getItem={getItem}
                   />
-                </>
-              ) : (
-                <ActivityIndicator />
-              )}
-            </View>
-          </View>
-        </ImageBackground>
-      </>
-    );
-}
-/*
 <FlatList
                     data={albums}
                     keyExtractor={(album) => album.id}
@@ -96,18 +90,7 @@ export default function Main({
                         handlePosition={handlePosition}
                       />
                     )}
-{albums.map((item) => {
-                      return (
-                        
-                        <Musics
-                          key={item.id}
-                          album={item}
-                          handleFile={handleFile}
-                          createAudio={createAudio}
-                          handlePosition={handlePosition}
-                        />
-                      );
-                    })}*/
+*/
 const styles = StyleSheet.create({
   imgBack: {
     flex: 1,

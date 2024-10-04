@@ -21,29 +21,34 @@ import { useEffect, useState } from 'react';
 import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration';
 import {
+  backSound,
+  changeSound,
+  createAudioApp,
   pauseAudio,
   playAudio,
-  getSound,
+  randomList,
   updatePositionSound
 } from '../lib/playAudio';
 import { useSound } from '../lib/zustand';
 
 export default function Reproductor({
-  isPlaying,
-  changeSound,
-  randomList,
-  randomMode,
-  backSound,
   route
 }) {
   const [sound, setSound] = useState(null);
   const [seconds, setSeconds] = useState(null);
   const [state, setState] = useState(true);
 
-  const { fileAudio, assets, addAudioAssets, updateAlbumRandom } = useSound();
-  //console.log(fileAudio)
+  const {
+    fileAudio,
+    assets,
+    addAudioAssets,
+    updateAlbumSound,
+    albums,
+    albumSound,
+    updateAlbums,
+    addSound
+  } = useSound();
   const { filename, durationAudio, id } = route.params;
-
   useEffect(() => {
     setSound({
       id,
@@ -110,7 +115,7 @@ export default function Reproductor({
                 activeOpacity={0.6}
                 underlayColor="#222"
                 style={
-                  randomMode && {
+                  assets.isRandom && {
                     backgroundColor: '#222',
                     padding: 5,
                     borderRadius: 50
@@ -136,11 +141,21 @@ export default function Reproductor({
                 style={styles.icons}
                 onPress={() => {
                   pauseSound();
-                  backSound(fileId).then((obj) => {
-                    setSound(obj.sound);
-                    setSeconds(obj.seconds);
-                    setState(false);
-                    isPlaying(false);
+                  backSound(assets.id, albums, albumSound).then((obj) => {
+                    setSound(obj.arrayUri[0]);
+                    const album = obj.arrayUri[0];
+                    addAudioAssets({
+                      ...assets,
+                      id: parseInt(obj.num),
+                      uri: album.uri,
+                      duration: album.duration,
+                      position: 0,
+                      filename: album.filename,
+                      isPlaying: false
+                    });
+                    createAudioApp(album.uri).then((file)=>{
+                      addSound(file)
+                    });
                   });
                 }}
               >
@@ -159,11 +174,21 @@ export default function Reproductor({
                 style={styles.icons}
                 onPress={() => {
                   pauseSound();
-                  changeSound(fileId).then((obj) => {
-                    setSound(obj.sound);
-                    setSeconds(obj.seconds);
-                    setState(false);
-                    isPlaying(false);
+                  changeSound(assets.id, albums, albumSound).then((obj) => {
+                    setSound(obj.arrayUri[0]);
+                    const album = obj.arrayUri[0];
+                    addAudioAssets({
+                      ...assets,
+                      id: parseInt(album.id),
+                      uri: album.uri,
+                      duration: album.duration,
+                      position: 0,
+                      filename: album.filename,
+                      isPlaying: false
+                    });
+                    createAudioApp(album.uri).then((file)=>{
+                      addSound(file)
+                    });
                   });
                 }}
               >

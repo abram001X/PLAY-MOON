@@ -4,7 +4,7 @@ import { duration } from '../lib/duration';
 import { useSound } from '../lib/zustand';
 import { createAudioApp } from '../lib/playAudio';
 
-export default function Musics({ album, createAudio, navigation }) {
+export default function Musics({ album, navigation }) {
   const { file, addSound, assets, addAudioAssets } = useSound();
   return (
     <Pressable
@@ -14,7 +14,7 @@ export default function Musics({ album, createAudio, navigation }) {
           addSound(file);
           addAudioAssets({
             ...assets,
-            id: album.id,
+            id: parseInt(album.id),
             uri: album.uri,
             duration: album.duration,
             position: 0,
