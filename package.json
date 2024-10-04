@@ -13,6 +13,8 @@
     "@expo/vector-icons": "^14.0.2",
     "@miblanchard/react-native-slider": "^2.6.0",
     "@react-native-windows/fs": "^1.0.2",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
     "expo": "~51.0.28",
     "expo-av": "~14.0.7",
