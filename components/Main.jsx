@@ -74,8 +74,33 @@ export default function Main({
               style={fileName && isSearch && styles.list}
             >
               {albums ? (
-                <>
-                  <VirtualizedList
+                <><ScrollView>
+                  {albums.map((item) => {
+                      return (
+                        
+                        <Musics
+                          key={item.id}
+                          album={item}
+                          handleFile={handleFile}
+                          createAudio={createAudio}
+                          handlePosition={handlePosition}
+                        />
+                      );
+                    })}
+                </ScrollView>
+                </>
+              ) : (
+                <ActivityIndicator />
+              )}
+            </View>
+          </View>
+        </ImageBackground>
+      </>
+    );
+  }
+}
+/*
+<VirtualizedList
                     initialNumToRender={15}
                     renderItem={({ item }) => (
                       <Musics
@@ -89,18 +114,6 @@ export default function Main({
                     getItemCount={getItemCount}
                     getItem={getItem}
                   />
-                </>
-              ) : (
-                <ActivityIndicator />
-              )}
-            </View>
-          </View>
-        </ImageBackground>
-      </>
-    );
-  }
-}
-/*
 <FlatList
                     data={albums}
                     keyExtractor={(album) => album.id}
@@ -114,18 +127,7 @@ export default function Main({
                         handlePosition={handlePosition}
                       />
                     )}
-{albums.map((item) => {
-                      return (
-                        
-                        <Musics
-                          key={item.id}
-                          album={item}
-                          handleFile={handleFile}
-                          createAudio={createAudio}
-                          handlePosition={handlePosition}
-                        />
-                      );
-                    })}*/
+*/
 const styles = StyleSheet.create({
   imgBack: {
     flex: 1,
