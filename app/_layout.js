@@ -10,6 +10,7 @@ export default function Layout() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={Main}/>
+        <Stack.Screen name="Reproductor" component={Reproductor}/>
       </Stack.Navigator>
     </NavigationContainer>
   )  
