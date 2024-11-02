@@ -134,6 +134,8 @@ export default function Index() {
     }
   };
 
+  /*
+  
   const handleAlbums = (nameAudio) => {
     const name = nameAudio.toLowerCase();
     if (nameAudio) {
@@ -143,7 +145,7 @@ export default function Index() {
     } else {
       setAlbums(listAudio);
     }
-  };
+  };*/
 
   return (
     <SafeAreaProvider>
