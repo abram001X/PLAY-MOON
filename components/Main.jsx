@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -12,53 +12,90 @@ import Musics from './Musics.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Reproductor from './Reproductor.jsx';
 import Search from './SearchAudio.jsx';
-export default function Main({
-  fileId,
-  albums,
-  handleAlbums,
-  createAudio,
-  handleFile,
-  fileAudio,
-  isPlaying,
-  status,
-  changeSound,
-  randomList,
-  albumSound,
-  randomMode,
-  backSound,
-  handlePosition,
-  positionAudio,
-  rangeProcess,
-  reproductor,
-  isSearch,
-  fileName
-}) {
+import Plane from './Plane.jsx'
+import * as MediaLibrary from 'expo-media-library';
+import { AudioContext } from '../provider/AudioProvider.jsx';
+import { handleAudio } from '../lib/audioObject.js';
+export default function Main() {
   const insets = useSafeAreaInsets();
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+  const [albums, setAlbums] = useState();
+  const [pages, setPages] = useState(500);
+  const [morePages, setMorePages] = useState(true);
+  const [loading, setLoading] = useState(true); //pasar a false
+  const [reproductor, setReproductor] = useState(false);
+  const [fileId, setFileId] = useState(null);
+  const [fileAudio, setFileAudio] = useState(null);
+  const [status, setStatus] = useState(true);
+  const [fileName, setFileName] = useState(null);
+  const [albumSound, setAlbumSound] = useState([]); //<---ojo
+  const [randomMode, setRandomMode] = useState(false);
+  const [isSearch, setIsSearch] = useState(true);
+  const [listAudio, setListAudio] = useState([]);
+  const [positionAudio, setPositionAudio] = useState(0);
+  const [minutes, setMinutes] = useState(null);
 
-  const getItem = (_data, index) => albums[index];
-  const getItemCount = (_data) => 200;
+
+  useEffect(() => {
+    handleAudio.getPermission(permissionResponse, requestPermission)
+      .then((assets) => {
+        setAlbums(assets);
+        setListAudio(assets);
+        setAlbumSound(
+          assets.map((obj) => {
+            return parseInt(obj.id);
+          })
+        );
+      });
+  }, [permissionResponse, requestPermission]);
+
+  const handleFile = (id,render = true) => {
+    setFileId(id)
+    setReproductor(render);
+  };
+
+  /*const handlePosition = (range, num) => {
+    setMinutes(num);
+    setPositionAudio(range);
+  };*/
+
+  const isPlaying = (state) => {
+    setStatus(state);
+  };
+  /*const rangeProcess = (file, num) => {
+    if (minutes) {
+      setInterval(async () => {
+        const currentStatus = await file.getStatusAsync();
+        if (currentStatus.isPlaying) {
+          setPositionAudio(currentStatus.positionMillis / 1000);
+        }
+      }, 500);
+    } else if (num) {
+      setInterval(async () => {
+        const currentStatus = await file.getStatusAsync();
+        if (currentStatus.isPlaying) {
+          setPositionAudio(currentStatus.positionMillis / 1000);
+        }
+      }, 500);
+    }
+  };*/
+
+  /*
+  
+  const handleAlbums = (nameAudio) => {
+    const name = nameAudio.toLowerCase();
+    if (nameAudio) {
+      setAlbums(
+        listAudio.filter((obj) => obj.filename.toLowerCase().includes(name))
+      );
+    } else {
+      setAlbums(listAudio);
+    }
+  };*/
+
+  //const getItem = (_data, index) => albums[index];
+  //const getItemCount = (_data) => 200;
   //console.log(isSearch);
-  if (reproductor) {
-    return (
-      <>
-        <Reproductor
-          fileId={parseInt(fileId)}
-          handleFile={handleFile}
-          fileAudio={fileAudio && fileAudio}
-          isPlaying={isPlaying}
-          status={status}
-          changeSound={changeSound}
-          randomList={randomList}
-          albumSound={albumSound && albumSound}
-          randomMode={randomMode}
-          backSound={backSound}
-          handlePosition={handlePosition}
-          positionAudio={positionAudio}
-          rangeProcess={rangeProcess}
-        />
-      </>
-    );
-  } else {
     return (
       <>
         <ImageBackground
@@ -68,37 +105,45 @@ export default function Main({
           <View
             style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
           >
-            <Search albums={albums} handleAlbums={handleAlbums} />
+           {/* <Search albums={albums} />*/}
             <View
               className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
               style={fileName && isSearch && styles.list}
             >
               {albums ? (
-                <><ScrollView>
-                  {albums.map((item) => {
+                <>
+                  <ScrollView>
+                    {albums.map((item) => {
                       return (
-                        
                         <Musics
                           key={item.id}
                           album={item}
                           handleFile={handleFile}
-                          createAudio={createAudio}
-                          handlePosition={handlePosition}
+                          //handlePosition={handlePosition}
                         />
                       );
                     })}
-                </ScrollView>
+                  </ScrollView>
                 </>
               ) : (
                 <ActivityIndicator />
               )}
             </View>
+            {fileName && !reproductor && (
+              <Plane
+                isPlaying={isPlaying}
+                status={status}
+                fileName={fileName && fileName}
+                fileId={parseInt(fileId)}
+                handleFile={handleFile}
+              />
+            )}
           </View>
         </ImageBackground>
       </>
     );
   }
-}
+
 /*
 <VirtualizedList
                     initialNumToRender={15}

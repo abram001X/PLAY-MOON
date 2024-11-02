@@ -10,17 +10,15 @@ import { PlayIcon, PauseIcon, RightIcon } from './Icons';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { pauseAudio, playAudio } from '../lib/playAudio';
 import { duration } from '../lib/duration';
+import { useContext } from 'react';
 export function Plane({
-  fileAudio,
   isPlaying,
   status,
   fileName,
   fileId,
-  changeSound,
-  handleFile,
-  positionAudio
+  handleFile
 }) {
-
+  const { handleAudio } = useContext(AudioContext);
   return (
     <TouchableHighlight
       onPress={() => {
@@ -33,17 +31,17 @@ export function Plane({
           <Text className="text-white max-h-8 mr-5">
             {fileName && fileName}
           </Text>
-          <Text className='text-yellow-400'>{duration(positionAudio)}</Text>
+          {/*<Text className='text-yellow-400'>{duration(positionAudio)}</Text>*/}
         </View>
         <View className="flex-row justify-between flex-1">
           <Pressable
             onPress={() => {
               if (status) {
                 isPlaying(false);
-                playAudio(fileAudio);
+                handleAudio.playAudio();
               } else {
                 isPlaying(true);
-                pauseAudio(fileAudio);
+                handleAudio.pauseAudio();
               }
             }}
           >
@@ -55,7 +53,7 @@ export function Plane({
           </Pressable>
           <Pressable
             onPress={() => {
-              changeSound(fileId);
+              handleAudio.changeSound();
             }}
           >
             <RightIcon size={35} />
