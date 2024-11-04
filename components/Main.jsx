@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 import Musics from './Musics.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Reproductor from './Reproductor.jsx';
+import Reproductor from '../app/Reproductor.jsx';
 import Search from './SearchAudio.jsx';
-import Plane from './Plane.jsx'
+import Plane from './Plane.jsx';
 import * as MediaLibrary from 'expo-media-library';
-import { AudioContext } from '../provider/AudioProvider.jsx';
 import { handleAudio } from '../lib/audioObject.js';
+import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
@@ -34,25 +34,24 @@ export default function Main() {
   const [listAudio, setListAudio] = useState([]);
   const [positionAudio, setPositionAudio] = useState(0);
   const [minutes, setMinutes] = useState(null);
-
-
+  const { setSoundList,handleAudio } = useContext(AudioContext);
   useEffect(() => {
-    handleAudio.getPermission(permissionResponse, requestPermission)
+    handleAudio
+      .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
-        setListAudio(assets);
-        setAlbumSound(
+        //setListAudio(assets);
+        setSoundList(
           assets.map((obj) => {
             return parseInt(obj.id);
           })
         );
       });
   }, [permissionResponse, requestPermission]);
-
-  const handleFile = (id,render = true) => {
+  /*const handleFile = (id,render = true) => {
     setFileId(id)
     setReproductor(render);
-  };
+  };*/
 
   /*const handlePosition = (range, num) => {
     setMinutes(num);
@@ -96,53 +95,50 @@ export default function Main() {
   //const getItem = (_data, index) => albums[index];
   //const getItemCount = (_data) => 200;
   //console.log(isSearch);
-    return (
-      <>
-        <ImageBackground
-          source={require('../assets/fondo.jpeg')}
-          style={styles.imgBack}
-        >
+  return (
+    <>
+      <ImageBackground
+        source={require('../assets/fondo.jpeg')}
+        style={styles.imgBack}
+      >
+        <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+          {/* <Search albums={albums} />*/}
           <View
-            style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+            className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
+            style={fileName && isSearch && styles.list}
           >
-           {/* <Search albums={albums} />*/}
-            <View
-              className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
-              style={fileName && isSearch && styles.list}
-            >
-              {albums ? (
-                <>
-                  <ScrollView>
-                    {albums.map((item) => {
-                      return (
-                        <Musics
-                          key={item.id}
-                          album={item}
-                          handleFile={handleFile}
-                          //handlePosition={handlePosition}
-                        />
-                      );
-                    })}
-                  </ScrollView>
-                </>
-              ) : (
-                <ActivityIndicator />
-              )}
-            </View>
-            {fileName && !reproductor && (
-              <Plane
-                isPlaying={isPlaying}
-                status={status}
-                fileName={fileName && fileName}
-                fileId={parseInt(fileId)}
-                handleFile={handleFile}
-              />
+            {albums ? (
+              <>
+                <ScrollView>
+                  {albums.map((item) => {
+                    return (
+                      <Musics
+                        key={item.id}
+                        album={item}
+                        //handlePosition={handlePosition}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </>
+            ) : (
+              <ActivityIndicator />
             )}
           </View>
-        </ImageBackground>
-      </>
-    );
-  }
+          {fileName && !reproductor && (
+            <Plane
+              isPlaying={isPlaying}
+              status={status}
+              fileName={fileName && fileName}
+              fileId={parseInt(fileId)}
+              handleFile={handleFile}
+            />
+          )}
+        </View>
+      </ImageBackground>
+    </>
+  );
+}
 
 /*
 <VirtualizedList

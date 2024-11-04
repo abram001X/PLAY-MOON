@@ -1,24 +1,24 @@
 import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-import { useContext } from 'react';
-import { handleAudio } from '../lib/audioObject.js';
 import { Link } from 'expo-router';
+import { useSound } from '../lib/zustand';
+import { handleAudio } from '../lib/audioObject';
+import { useContext } from 'react';
+import { AudioContext } from '../provider/AudioProvider';
 export default function Musics({
-  album,
-  handleFile
+  album
   //handlePosition,
 }) {
-  //const { handleAudio } = useContext(AudioContext);
+  const { setAudioId, setSoundObject } = useContext(AudioContext);
+  const create = async () => {
+    const res = await handleAudio.createAudioApp(album.uri);
+    setAudioId(parseInt(album.id))
+    setSoundObject(res)
+  };
   return (
-    <Link asChild href={`/${album.id}`}>
-      <Pressable
-        onPress={() => {
-          //handlePosition(0, album.duration);
-          handleAudio.createAudioApp(album.uri);
-          handleFile(parseInt(album.id));
-        }}
-      >
+    <Link asChild href={`/Reproductor`}>
+      <Pressable onPress={create}>
         <View key={album.id} className="flex-row  p-2 pl-0">
           <Image source={LogoPro} style={styles.img} />
           <View className="flex-shrink">

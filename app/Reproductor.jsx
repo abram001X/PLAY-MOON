@@ -16,38 +16,35 @@ import {
   RepeatIcon,
   RightIcon,
   PauseIcon
-} from './Icons';
+} from '../components/Icons.jsx';
 import { useContext, useEffect, useState } from 'react';
+import * as MediaLibrary from 'expo-media-library';
 import { Slider } from '@miblanchard/react-native-slider';
-import { duration } from '../lib/duration';
-import { handleAudio } from '../lib/audioObject.js';
-export default function Reproductor({id}) {
-  const [sound, setSound] = useState(null);
+import { duration } from '../lib/duration.js';
+//import { handleAudio } from '../lib/audioObject.js';
+import { useSound } from '../lib/zustand.js';
+import { useLocalSearchParams } from 'expo-router';
+import { AudioContext } from '../provider/AudioProvider.jsx';
+export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
   const [status, setStatus] = useState(false);
+  const [sound, setSound] = useState();
   //const [state, setState] = useState(true);
   const [randomMode, setRandomMode] = useState(false);
-  //const { handleAudio } = useContext(AudioContext);
+  const { setSoundObject, handleAudio, audioId, setAudioId } =
+    useContext(AudioContext);
   useEffect(() => {
-    const backAction = () => {
-      return true;
-    };
+    handleSound();
+  }, [audioId]);
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-    return () => backHandler.remove();
-  }, [id]);
-  useEffect(() => {
-    console.log(id);
-    handleAudio.getSound(id).then((assets) => {
-      setSound(assets[0]);
-      console.log(assets);
-      //setSeconds(duration(assets[0].duration));
+  const handleSound = async () => {
+    const { assets, hasNextPage } = await MediaLibrary.getAssetsAsync({
+      mediaType: 'audio',
+      first: 200
     });
-  }, [id]);
-
+    const obj = assets.filter((obj) => obj.id == audioId )
+    setSound(obj[0])
+  };
   const randomList = async () => {
     const isRandom = await handleAudio.randomList();
     setRandomMode(isRandom);
@@ -65,7 +62,7 @@ export default function Reproductor({id}) {
           <View style={styles.contInterfaz}>
             <View style={styles.contText}>
               <Text style={styles.textTitle} className="h-11">
-                {sound.filename}{' '}
+                {sound.filename}
               </Text>
             </View>
             <View style={styles.slider}>
@@ -113,10 +110,9 @@ export default function Reproductor({id}) {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.backSound(id).then((obj) => {
-                    setSound(obj.sound);
-                    setSeconds(obj.seconds);
-                    //setState(false);
+                  handleAudio.backSound(audioId).then((obj) => {
+                    setAudioId(parseInt(audioId) - 1);
+                    setSoundObject(obj);
                     setStatus(false);
                   });
                 }}
@@ -142,10 +138,9 @@ export default function Reproductor({id}) {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.changeSound(id).then((obj) => {
-                    setSound(obj.sound);
-                    setSeconds(obj.seconds);
-                    //setState(false);
+                  handleAudio.changeSound(parseInt(audioId)).then((obj) => {
+                    setAudioId(parseInt(audioId) + 1);
+                    setSoundObject(obj);
                     setStatus(false);
                   });
                 }}
