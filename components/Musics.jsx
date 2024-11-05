@@ -2,14 +2,14 @@ import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
 import { Link } from 'expo-router';
-import { useSound } from '../lib/zustand';
 import { useContext } from 'react';
 import { AudioContext } from '../provider/AudioProvider';
+import { handleAudio } from '../lib/audioObject';
 export default function Musics({
   album
   //handlePosition,
 }) {
-  const { setAudioId, handleAudio } = useContext(AudioContext);
+  const { setAudioId } = useContext(AudioContext);
   const create = async () => {
     setAudioId(parseInt(album.id));
     await handleAudio.createAudioApp(album.uri);

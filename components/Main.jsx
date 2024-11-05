@@ -33,9 +33,19 @@ export default function Main() {
   const [listAudio, setListAudio] = useState([]);
   const [positionAudio, setPositionAudio] = useState(0);
   const [minutes, setMinutes] = useState(null);
-  const { albums, handleAudio } = useContext(AudioContext);
+  const { setSoundList,albums, setAlbums } = useContext(AudioContext);
   useEffect(() => {
-    handleAudio.getPermission(permissionResponse, requestPermission)
+    handleAudio
+      .getPermission(permissionResponse, requestPermission)
+      .then((assets) => {
+        setAlbums(assets);
+        //setListAudio(assets);
+        setSoundList(
+          assets.map((obj) => {
+            return parseInt(obj.id);
+          })
+        );
+      });
   }, [permissionResponse, requestPermission]);
   /*const handleFile = (id,render = true) => {
     setFileId(id)

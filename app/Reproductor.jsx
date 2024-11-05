@@ -25,22 +25,20 @@ import { duration } from '../lib/duration.js';
 import { useSound } from '../lib/zustand.js';
 import { useLocalSearchParams } from 'expo-router';
 import { AudioContext } from '../provider/AudioProvider.jsx';
+import { handleAudio } from '../lib/audioObject.js';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
   const [status, setStatus] = useState(false);
   const [sound, setSound] = useState(null);
   //const [state, setState] = useState(true);
   const [randomMode, setRandomModesound] = useState(false);
-  const { handleAudio,audioId } =
-    useContext(AudioContext);
+  const { audioId, albums, soundList, setAudioId } = useContext(AudioContext);
   useEffect(() => {
     handleSound();
   }, []);
-
-  const handleSound = async () => {
-    const res = await handleAudio.getSound()
-    console.log(res)
-    setSound(res[0])
+  const handleSound = () => {
+    const res = albums.filter((obj) => obj.id == audioId);
+    setSound(res[0]);
   };
   const randomList = async () => {
     const isRandom = await handleAudio.randomList();
@@ -107,8 +105,14 @@ export default function Reproductor() {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.backSound()
-                  setStatus(false);
+                  handleAudio
+                    .backSound(soundList, audioId, albums)
+                    .then((obj) => {
+                      setSound(obj.res[0]);
+                      setAudioId(audioId - 1);
+                      //setSoundObject(obj.res2);
+                      setStatus(false);
+                    });
                 }}
               >
                 <LeftIcon />
@@ -132,9 +136,14 @@ export default function Reproductor() {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.changeSound().then(obj => 
-                    setSound(obj[0]))
-                  setStatus(false);
+                  handleAudio
+                    .changeSound(soundList, audioId, albums)
+                    .then((obj) => {
+                      setSound(obj.res[0]);
+                      setAudioId(audioId + 1);
+                      //setSoundObject(obj.res2);
+                      setStatus(false);
+                    });
                 }}
               >
                 <RightIcon />
