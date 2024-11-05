@@ -3,18 +3,16 @@ import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
 import { Link } from 'expo-router';
 import { useSound } from '../lib/zustand';
-import { handleAudio } from '../lib/audioObject';
 import { useContext } from 'react';
 import { AudioContext } from '../provider/AudioProvider';
 export default function Musics({
   album
   //handlePosition,
 }) {
-  const { setAudioId, setSoundObject } = useContext(AudioContext);
+  const { setAudioId, handleAudio } = useContext(AudioContext);
   const create = async () => {
-    const res = await handleAudio.createAudioApp(album.uri);
-    setAudioId(parseInt(album.id))
-    setSoundObject(res)
+    setAudioId(parseInt(album.id));
+    await handleAudio.createAudioApp(album.uri);
   };
   return (
     <Link asChild href={`/Reproductor`}>

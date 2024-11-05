@@ -28,22 +28,19 @@ import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
   const [status, setStatus] = useState(false);
-  const [sound, setSound] = useState();
+  const [sound, setSound] = useState(null);
   //const [state, setState] = useState(true);
-  const [randomMode, setRandomMode] = useState(false);
-  const { setSoundObject, handleAudio, audioId, setAudioId } =
+  const [randomMode, setRandomModesound] = useState(false);
+  const { handleAudio,audioId } =
     useContext(AudioContext);
   useEffect(() => {
     handleSound();
-  }, [audioId]);
+  }, []);
 
   const handleSound = async () => {
-    const { assets, hasNextPage } = await MediaLibrary.getAssetsAsync({
-      mediaType: 'audio',
-      first: 200
-    });
-    const obj = assets.filter((obj) => obj.id == audioId )
-    setSound(obj[0])
+    const res = await handleAudio.getSound()
+    console.log(res)
+    setSound(res[0])
   };
   const randomList = async () => {
     const isRandom = await handleAudio.randomList();
@@ -110,11 +107,8 @@ export default function Reproductor() {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.backSound(audioId).then((obj) => {
-                    setAudioId(parseInt(audioId) - 1);
-                    setSoundObject(obj);
-                    setStatus(false);
-                  });
+                  handleAudio.backSound()
+                  setStatus(false);
                 }}
               >
                 <LeftIcon />
@@ -130,7 +124,7 @@ export default function Reproductor() {
                   }
                 }}
               >
-                {!status ? <PauseIcon /> : <PlayIcon />}
+                {status ? <PauseIcon /> : <PlayIcon />}
               </Pressable>
               <TouchableHighlight
                 activeOpacity={0.7}
@@ -138,11 +132,9 @@ export default function Reproductor() {
                 style={styles.icons}
                 onPress={() => {
                   handleAudio.pauseAudio();
-                  handleAudio.changeSound(parseInt(audioId)).then((obj) => {
-                    setAudioId(parseInt(audioId) + 1);
-                    setSoundObject(obj);
-                    setStatus(false);
-                  });
+                  handleAudio.changeSound().then(obj => 
+                    setSound(obj[0]))
+                  setStatus(false);
                 }}
               >
                 <RightIcon />

@@ -6,12 +6,14 @@ export default function AudioProvider({ children }) {
   const [soundObject, setSoundObject] = useState({});
   const [soundList, setSoundList] = useState([]);
   const [audioId, setAudioId] = useState('');
-  const [albums, setAlbums] = useState([])
+  const [albums, setAlbums] = useState([]);
+  const [sound, setSound] = useState(null)
   class HandleAudio {
     constructor() {
       let audioListObject;
       let audioListObjectRandom;
       let isRandom = false;
+
       this.getPermission = async function (
         permissionResponse,
         requestPermission
@@ -24,23 +26,25 @@ export default function AudioProvider({ children }) {
           mediaType: 'audio',
           first: 200
         });
-        return assets;
+        setAlbums(assets);
+        setSoundList(
+          assets.map((obj) => {
+            return parseInt(obj.id);
+          })
+        );
       };
 
-      this.getSound = async function (fileId) {
-        const { assets, hasNextPage } = await MediaLibrary.getAssetsAsync({
-          mediaType: 'audio',
-          first: 200
-        });
-        return assets.filter((obj) => obj.id == fileId);
+      this.getSound = async function () {
+        return albums.filter((obj) => obj.id == audioId);
       };
 
-      this.createAudioApp = async function (uri, play = true) {
+      this.createAudioApp = async function (uri, id = null, play = true) {
         //clearInterval()
         const { sound: soundObject } = await Audio.Sound.createAsync(
           { uri },
           { shouldPlay: play }
         );
+        setSoundObject(soundObject);
         return soundObject;
       };
 
@@ -52,18 +56,20 @@ export default function AudioProvider({ children }) {
         await soundObject.playAsync();
       };
 
-      this.changeSound = async function (audioId) {
+      this.changeSound = async function () {
         const num = soundList[soundList.indexOf(audioId) + 1];
         const res = await this.getSound(num);
-        const res2 = await this.createAudioApp(res[0].uri);
-        return  res2
+        await this.createAudioApp(res[0].uri);
+        setAudioId(audioId + 1);
+        return res;
       };
 
-      this.backSound = async function (audioId) {
+      this.backSound = async function () {
         const num = soundList[soundList.indexOf(audioId) - 1];
         const res = await this.getSound(num);
-        const res2 = await this.createAudioApp(res[0].uri);
-        return res2
+        await this.createAudioApp(res[0].uri);
+        setAudioId(audioId - 1);
+        return res;
       };
 
       this.handlePosition = async function () {};
@@ -87,7 +93,12 @@ export default function AudioProvider({ children }) {
   return (
     <AudioContext.Provider
       value={{
-        handleAudio
+        handleAudio,
+        setAlbums,
+        setAudioId,
+        albums,
+        sound,
+        setSound
       }}
     >
       {children}

@@ -19,7 +19,6 @@ import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
-  const [albums, setAlbums] = useState();
   const [pages, setPages] = useState(500);
   const [morePages, setMorePages] = useState(true);
   const [loading, setLoading] = useState(true); //pasar a false
@@ -34,19 +33,9 @@ export default function Main() {
   const [listAudio, setListAudio] = useState([]);
   const [positionAudio, setPositionAudio] = useState(0);
   const [minutes, setMinutes] = useState(null);
-  const { setSoundList,handleAudio } = useContext(AudioContext);
+  const { albums, handleAudio } = useContext(AudioContext);
   useEffect(() => {
-    handleAudio
-      .getPermission(permissionResponse, requestPermission)
-      .then((assets) => {
-        setAlbums(assets);
-        //setListAudio(assets);
-        setSoundList(
-          assets.map((obj) => {
-            return parseInt(obj.id);
-          })
-        );
-      });
+    handleAudio.getPermission(permissionResponse, requestPermission)
   }, [permissionResponse, requestPermission]);
   /*const handleFile = (id,render = true) => {
     setFileId(id)
