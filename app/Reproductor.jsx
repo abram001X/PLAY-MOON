@@ -25,28 +25,30 @@ import { handleAudio } from '../lib/audioObject.js';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
   const [status, setStatus] = useState(true);
-  const [isPlaying, setIsplaying] = useState(true);
+  const [isPlaying, setIsplaying] = useState(false);
   const [sound, setSound] = useState(null);
   const [position, setPosition] = useState(0);
   const intervalRef = useRef(null);
   const [randomMode, setRandomModesound] = useState(false);
+
   useEffect(() => {
     handleSound();
   }, []);
 
   useEffect(() => {
-    proccessAudio();
+    if (isPlaying) {
+      console.log('hey');
+      const interval = setInterval(async () => {
+        console.log('hola');
+        const seconds = await handleAudio.rangeProccess();
+        console.log(seconds);
+        setPosition(seconds);
+      }, 900);
+      intervalRef.current = interval;
+    } else clearInterval(intervalRef.current);
   }, [isPlaying]);
 
-  const proccessAudio = async () => {
-    const object = await handleAudio.getObject();
-    if (isPlaying) {
-      intervalRef.current = setInterval(async () => {
-        const currentStatus = await object.getStatusAsync();
-        setPosition(currentStatus.positionMillis / 1000);
-      }, 700);
-    } else clearInterval(intervalRef.current);
-  };
+  const proccessAudio = async () => {};
 
   const handlePosition = async (value) => {
     //value[0]
@@ -89,6 +91,7 @@ export default function Reproductor() {
   };
 
   const changeAudio = async () => {
+    setIsplaying(false);
     handleAudio.pauseAudio();
     await handleAudio.changeSound();
     await handleSound();
