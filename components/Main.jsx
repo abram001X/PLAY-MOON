@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -10,84 +10,24 @@ import {
 } from 'react-native';
 import Musics from './Musics.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Reproductor from '../app/Reproductor.jsx';
 import Search from './SearchAudio.jsx';
 import Plane from './Plane.jsx';
 import * as MediaLibrary from 'expo-media-library';
 import { handleAudio } from '../lib/audioObject.js';
+
 export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
-  const [pages, setPages] = useState(500);
-  const [morePages, setMorePages] = useState(true);
-  const [loading, setLoading] = useState(true); //pasar a false
-  const [reproductor, setReproductor] = useState(false);
-  const [fileId, setFileId] = useState(null);
-  const [fileAudio, setFileAudio] = useState(null);
-  const [status, setStatus] = useState(true);
-  const [fileName, setFileName] = useState(null);
-  const [albumSound, setAlbumSound] = useState([]); //<---ojo
-  const [randomMode, setRandomMode] = useState(false);
-  const [isSearch, setIsSearch] = useState(true);
-  const [listAudio, setListAudio] = useState([]);
-  const [positionAudio, setPositionAudio] = useState(0);
-  const [minutes, setMinutes] = useState(null);
   const [albums, setAlbums] = useState(null);
+  
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
-        //setListAudio(assets);
       });
   }, [permissionResponse, requestPermission]);
-  /*const handleFile = (id,render = true) => {
-    setFileId(id)
-    setReproductor(render);
-  };*/
 
-  /*const handlePosition = (range, num) => {
-    setMinutes(num);
-    setPositionAudio(range);
-  };*/
-
-  const isPlaying = (state) => {
-    setStatus(state);
-  };
-  /*const rangeProcess = (file, num) => {
-    if (minutes) {
-      setInterval(async () => {
-        const currentStatus = await file.getStatusAsync();
-        if (currentStatus.isPlaying) {
-          setPositionAudio(currentStatus.positionMillis / 1000);
-        }
-      }, 500);
-    } else if (num) {
-      setInterval(async () => {
-        const currentStatus = await file.getStatusAsync();
-        if (currentStatus.isPlaying) {
-          setPositionAudio(currentStatus.positionMillis / 1000);
-        }
-      }, 500);
-    }
-  };*/
-
-  /*
-  
-  const handleAlbums = (nameAudio) => {
-    const name = nameAudio.toLowerCase();
-    if (nameAudio) {
-      setAlbums(
-        listAudio.filter((obj) => obj.filename.toLowerCase().includes(name))
-      );
-    } else {
-      setAlbums(listAudio);
-    }
-  };*/
-
-  //const getItem = (_data, index) => albums[index];
-  //const getItemCount = (_data) => 200;
-  //console.log(isSearch);
   return (
     <>
       <ImageBackground
@@ -97,8 +37,7 @@ export default function Main() {
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
           {/* <Search albums={albums} />*/}
           <View
-            className={isSearch ? 'p-1 pt-0 mb-20' : 'p-1 pt-0 pb-0'}
-            style={fileName && isSearch && styles.list}
+            className={'p-1 pt-0 pb-0' }
           >
             {albums ? (
               <>
@@ -118,15 +57,14 @@ export default function Main() {
               <ActivityIndicator />
             )}
           </View>
-          {fileName && !reproductor && (
-            <Plane
-              isPlaying={isPlaying}
-              status={status}
-              fileName={fileName && fileName}
-              fileId={parseInt(fileId)}
-              handleFile={handleFile}
-            />
-          )}
+
+          {/*<Plane
+            isPlaying={isPlaying}
+            status={status}
+            fileName={fileName && fileName}
+            fileId={parseInt(fileId)}
+            handleFile={handleFile}
+          />*/}
         </View>
       </ImageBackground>
     </>

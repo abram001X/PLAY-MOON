@@ -29,7 +29,7 @@ export default function Reproductor() {
   const [sound, setSound] = useState(null);
   const [position, setPosition] = useState(0);
   const intervalRef = useRef(null);
-  const [randomMode, setRandomModesound] = useState(false);
+  const [isRandom, setIsRandom] = useState(false);
 
   useEffect(() => {
     handleSound();
@@ -37,18 +37,17 @@ export default function Reproductor() {
 
   useEffect(() => {
     if (isPlaying) {
-      console.log('hey');
       const interval = setInterval(async () => {
-        console.log('hola');
         const seconds = await handleAudio.rangeProccess();
         console.log(seconds);
         setPosition(seconds);
+        if (seconds + 1 >= sound.duration) {
+          changeAudio();
+        }
       }, 900);
       intervalRef.current = interval;
     } else clearInterval(intervalRef.current);
   }, [isPlaying]);
-
-  const proccessAudio = async () => {};
 
   const handlePosition = async (value) => {
     //value[0]
@@ -65,8 +64,8 @@ export default function Reproductor() {
   };
 
   const randomList = async () => {
-    const isRandom = await handleAudio.randomList();
-    setRandomMode(isRandom);
+    const res = await handleAudio.handleListRandom();
+    setIsRandom(res);
   };
 
   const pauseSound = () => {
@@ -142,15 +141,13 @@ export default function Reproductor() {
                 activeOpacity={0.6}
                 underlayColor="#222"
                 style={
-                  randomMode && {
+                  isRandom && {
                     backgroundColor: '#222',
                     padding: 5,
                     borderRadius: 50
                   }
                 }
-                onPress={() => {
-                  randomMode ? randomList(false) : randomList(true);
-                }}
+                onPress={randomList}
               >
                 <RandomIcon />
               </TouchableHighlight>
