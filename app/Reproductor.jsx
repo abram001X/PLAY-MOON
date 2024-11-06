@@ -17,33 +17,85 @@ import {
   RightIcon,
   PauseIcon
 } from '../components/Icons.jsx';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
 import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration.js';
-//import { handleAudio } from '../lib/audioObject.js';
-import { useSound } from '../lib/zustand.js';
-import { useLocalSearchParams } from 'expo-router';
-import { AudioContext } from '../provider/AudioProvider.jsx';
 import { handleAudio } from '../lib/audioObject.js';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState(true);
+  const [isPlaying, setIsplaying] = useState(true);
   const [sound, setSound] = useState(null);
-  //const [state, setState] = useState(true);
+  const [position, setPosition] = useState(0);
+  const intervalRef = useRef(null);
   const [randomMode, setRandomModesound] = useState(false);
-  const { audioId, albums, soundList, setAudioId } = useContext(AudioContext);
   useEffect(() => {
     handleSound();
   }, []);
-  const handleSound = () => {
-    const res = albums.filter((obj) => obj.id == audioId);
-    setSound(res[0]);
+
+  useEffect(() => {
+    proccessAudio();
+  }, [isPlaying]);
+
+  const proccessAudio = async () => {
+    const object = await handleAudio.getObject();
+    if (isPlaying) {
+      intervalRef.current = setInterval(async () => {
+        const currentStatus = await object.getStatusAsync();
+        setPosition(currentStatus.positionMillis / 1000);
+      }, 700);
+    } else clearInterval(intervalRef.current);
   };
+
+  const handlePosition = async (value) => {
+    //value[0]
+    await handleAudio.handlePosition(value[0] * 1000);
+    setPosition(value[0]);
+  };
+
+  const handleSound = async () => {
+    const res = await handleAudio.getSound();
+    setSeconds(duration(res[0].duration));
+    setSound(res[0]);
+    setIsplaying(true);
+    clearInterval(intervalRef.current);
+  };
+
   const randomList = async () => {
     const isRandom = await handleAudio.randomList();
     setRandomMode(isRandom);
   };
+
+  const pauseSound = () => {
+    handleAudio.pauseAudio();
+    setStatus(false);
+    setIsplaying(false);
+    clearInterval(intervalRef.current);
+  };
+
+  const playSound = () => {
+    handleAudio.playAudio();
+    setStatus(true);
+    setIsplaying(true);
+  };
+
+  const backAudio = async () => {
+    handleAudio.pauseAudio();
+    await handleAudio.backSound();
+    await handleSound();
+    setStatus(true);
+    setPosition(0);
+  };
+
+  const changeAudio = async () => {
+    handleAudio.pauseAudio();
+    await handleAudio.changeSound();
+    await handleSound();
+    setStatus(true);
+    setPosition(0);
+  };
+
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
@@ -56,28 +108,28 @@ export default function Reproductor() {
           </View>
           <View style={styles.contInterfaz}>
             <View style={styles.contText}>
-              <Text style={styles.textTitle} className="h-11">
+              <Text style={styles.textTitle} className="h-11 ">
                 {sound.filename}
               </Text>
             </View>
             <View style={styles.slider}>
-              {/*<Slider
+              <Slider
                 minimumTrackTintColor="#18f"
                 maximumTrackTintColor="#fff"
                 minimumValue={0}
                 maximumValue={sound.duration}
-                value={positionAudio}
-                onValueChange={(value) => updatePositionSound(value[0])}
-              />*/}
+                value={position}
+                onValueChange={handlePosition}
+              />
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between'
                 }}
               >
-                {/*<Text style={{ color: '#fff' }}>
-                  {duration(positionAudio)}{' '}
-                </Text>*/}
+                <Text style={{ color: '#fff' }}>
+                  {duration(parseInt(position))}{' '}
+                </Text>
                 <Text style={styles.duration}>{seconds && seconds} </Text>
               </View>
             </View>
@@ -103,29 +155,16 @@ export default function Reproductor() {
                 activeOpacity={0.9}
                 underlayColor="#222"
                 style={styles.icons}
-                onPress={() => {
-                  handleAudio.pauseAudio();
-                  handleAudio
-                    .backSound(soundList, audioId, albums)
-                    .then((obj) => {
-                      setSound(obj.res[0]);
-                      setAudioId(audioId - 1);
-                      //setSoundObject(obj.res2);
-                      setStatus(false);
-                    });
-                }}
+                onPress={backAudio}
               >
                 <LeftIcon />
               </TouchableHighlight>
               <Pressable
                 onPress={() => {
                   if (status) {
-                    handleAudio.pauseAudio();
-                    setStatus(false);
-                  } else {
-                    handleAudio.playAudio();
-                    setStatus(true);
+                    return pauseSound();
                   }
+                  playSound();
                 }}
               >
                 {status ? <PauseIcon /> : <PlayIcon />}
@@ -134,17 +173,7 @@ export default function Reproductor() {
                 activeOpacity={0.7}
                 underlayColor="#222"
                 style={styles.icons}
-                onPress={() => {
-                  handleAudio.pauseAudio();
-                  handleAudio
-                    .changeSound(soundList, audioId, albums)
-                    .then((obj) => {
-                      setSound(obj.res[0]);
-                      setAudioId(audioId + 1);
-                      //setSoundObject(obj.res2);
-                      setStatus(false);
-                    });
-                }}
+                onPress={changeAudio}
               >
                 <RightIcon />
               </TouchableHighlight>

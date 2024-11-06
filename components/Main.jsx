@@ -15,7 +15,6 @@ import Search from './SearchAudio.jsx';
 import Plane from './Plane.jsx';
 import * as MediaLibrary from 'expo-media-library';
 import { handleAudio } from '../lib/audioObject.js';
-import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
@@ -33,18 +32,13 @@ export default function Main() {
   const [listAudio, setListAudio] = useState([]);
   const [positionAudio, setPositionAudio] = useState(0);
   const [minutes, setMinutes] = useState(null);
-  const { setSoundList,albums, setAlbums } = useContext(AudioContext);
+  const [albums, setAlbums] = useState(null);
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
         //setListAudio(assets);
-        setSoundList(
-          assets.map((obj) => {
-            return parseInt(obj.id);
-          })
-        );
       });
   }, [permissionResponse, requestPermission]);
   /*const handleFile = (id,render = true) => {

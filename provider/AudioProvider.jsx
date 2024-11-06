@@ -15,8 +15,6 @@ export default function AudioProvider({ children }) {
         setAlbums,
         setAudioId,
         albums,
-        soundObject,
-        setSoundObject,
         audioId,
         setSoundList,
         soundList

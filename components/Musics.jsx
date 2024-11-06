@@ -1,33 +1,26 @@
 import { Button, View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-import { Link } from 'expo-router';
-import { useContext } from 'react';
-import { AudioContext } from '../provider/AudioProvider';
+import { Link, router } from 'expo-router';
 import { handleAudio } from '../lib/audioObject';
-export default function Musics({
-  album
-  //handlePosition,
-}) {
-  const { setAudioId } = useContext(AudioContext);
+export default function Musics({ album }) {
   const create = async () => {
-    setAudioId(parseInt(album.id));
-    await handleAudio.createAudioApp(album.uri);
+    await handleAudio.createAudioApp(album.uri, parseInt(album.id), true);
+    const res = await handleAudio.getObject();
+    if (res.getStatusAsync()) router.navigate('/Reproductor');
   };
   return (
-    <Link asChild href={`/Reproductor`}>
-      <Pressable onPress={create}>
-        <View key={album.id} className="flex-row  p-2 pl-0">
-          <Image source={LogoPro} style={styles.img} />
-          <View className="flex-shrink">
-            <Text className="text-white ml-2 h-4">{album.filename}</Text>
-            <Text className="text-slate-200 ml-2 mt-3">
-              {duration(album.duration)}{' '}
-            </Text>
-          </View>
+    <Pressable onPress={create}>
+      <View key={album.id} className="flex-row  p-2 pl-0">
+        <Image source={LogoPro} style={styles.img} />
+        <View className="flex-shrink">
+          <Text className="text-white ml-2 h-4">{album.filename} </Text>
+          <Text className="text-slate-200 ml-2 mt-3">
+            {duration(album.duration)}{' '}
+          </Text>
         </View>
-      </Pressable>
-    </Link>
+      </View>
+    </Pressable>
   );
 }
 const styles = StyleSheet.create({
