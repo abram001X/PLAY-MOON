@@ -8,10 +8,11 @@ import {
   ScrollView,
   VirtualizedList
 } from 'react-native';
+
 import Musics from './Musics.jsx';
+import Plane from './Plane.jsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Search from './SearchAudio.jsx';
-import Plane from './Plane.jsx';
 import * as MediaLibrary from 'expo-media-library';
 import { handleAudio } from '../lib/audioObject.js';
 
@@ -19,7 +20,7 @@ export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [albums, setAlbums] = useState(null);
-  
+
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
@@ -34,11 +35,12 @@ export default function Main() {
         source={require('../assets/fondo.jpeg')}
         style={styles.imgBack}
       >
-        <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+        <View
+          className="z-0 mb-32"
+          style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+        >
           {/* <Search albums={albums} />*/}
-          <View
-            className={'p-1 pt-0 pb-0' }
-          >
+          <View className='p-1 pt-0 pb-0 '>
             {albums ? (
               <>
                 <ScrollView>
@@ -57,14 +59,7 @@ export default function Main() {
               <ActivityIndicator />
             )}
           </View>
-
-          {/*<Plane
-            isPlaying={isPlaying}
-            status={status}
-            fileName={fileName && fileName}
-            fileId={parseInt(fileId)}
-            handleFile={handleFile}
-          />*/}
+            <Plane />
         </View>
       </ImageBackground>
     </>
