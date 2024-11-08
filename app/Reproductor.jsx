@@ -17,26 +17,26 @@ import {
   RightIcon,
   PauseIcon
 } from '../components/Icons.jsx';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
 import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration.js';
 import { handleAudio } from '../lib/audioObject.js';
+import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
-  const [status, setStatus] = useState(true);
-  const [isPlaying, setIsplaying] = useState(false);
   const [sound, setSound] = useState(null);
   const [position, setPosition] = useState(0);
   const intervalRef = useRef(null);
   const [isRandom, setIsRandom] = useState(false);
+  const { setSoundFile, setIsPlay, isPlay } = useContext(AudioContext);
 
   useEffect(() => {
     handleSound();
   }, []);
 
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlay) {
       const interval = setInterval(async () => {
         const seconds = await handleAudio.rangeProccess();
         console.log(seconds);
@@ -47,7 +47,7 @@ export default function Reproductor() {
       }, 900);
       intervalRef.current = interval;
     } else clearInterval(intervalRef.current);
-  }, [isPlaying]);
+  }, [isPlay]);
 
   const handlePosition = async (value) => {
     //value[0]
@@ -57,9 +57,10 @@ export default function Reproductor() {
 
   const handleSound = async () => {
     const res = await handleAudio.getSound();
+    setIsPlay(isPlay === null ? true : isPlay);
     setSeconds(duration(res[0].duration));
     setSound(res[0]);
-    setIsplaying(true);
+    setSoundFile(res[0]);
     clearInterval(intervalRef.current);
   };
 
@@ -70,31 +71,27 @@ export default function Reproductor() {
 
   const pauseSound = () => {
     handleAudio.pauseAudio();
-    setStatus(false);
-    setIsplaying(false);
+    setIsPlay(false);
     clearInterval(intervalRef.current);
   };
 
   const playSound = () => {
     handleAudio.playAudio();
-    setStatus(true);
-    setIsplaying(true);
+    setIsPlay(true);
   };
 
   const backAudio = async () => {
-    handleAudio.pauseAudio();
+    setIsPlay(true);
     await handleAudio.backSound();
     await handleSound();
-    setStatus(true);
     setPosition(0);
   };
 
   const changeAudio = async () => {
-    setIsplaying(false);
-    handleAudio.pauseAudio();
+    clearInterval(intervalRef.current)
+    setIsPlay(false);
     await handleAudio.changeSound();
     await handleSound();
-    setStatus(true);
     setPosition(0);
   };
 
@@ -161,13 +158,13 @@ export default function Reproductor() {
               </TouchableHighlight>
               <Pressable
                 onPress={() => {
-                  if (status) {
+                  if (isPlay) {
                     return pauseSound();
                   }
                   playSound();
                 }}
               >
-                {status ? <PauseIcon /> : <PlayIcon />}
+                {isPlay ? <PauseIcon /> : <PlayIcon />}
               </Pressable>
               <TouchableHighlight
                 activeOpacity={0.7}

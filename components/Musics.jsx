@@ -3,6 +3,8 @@ import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
 import { Link, router } from 'expo-router';
 import { handleAudio } from '../lib/audioObject';
+import { useContext } from 'react';
+import { AudioContext } from '../provider/AudioProvider';
 export default function Musics({ album }) {
   const create = async () => {
     await handleAudio.createAudioApp(album.uri, parseInt(album.id), true);

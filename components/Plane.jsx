@@ -9,88 +9,77 @@ import {
 import { PlayIcon, PauseIcon, RightIcon } from './Icons';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { handleAudio } from '../lib/audioObject';
 import { router } from 'expo-router';
+import { AudioContext } from '../provider/AudioProvider';
 
 export default function Plane() {
   const [fileName, setFileName] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [positionAudio, setPositionAudio] = useState(0);
 
+  const { soundFile, setSoundFile, isPlay, setIsPlay, } =
+    useContext(AudioContext);
   useEffect(() => {
     handleFileName();
-  }, [fileName]);
-
-  useEffect(() => {
-    handleIsplay();
-  }, [isPlaying]);
-
-  const handleIsplay = async () => {
-    const res = await handleAudio.getObject();
-    if (isPlaying) {
-      const currentStatus = await res.getStatusAsync();
-      setIsPlaying(currentStatus.isPlaying);
-    }
-  };
-
+  }, [soundFile]);
   const handleFileName = async () => {
-    const name = await handleAudio.getSound();
-    if (name[0]) {
-      setFileName(name[0].filename);
-      setPositionAudio(parseInt(name[0].duration));
+    if (soundFile) {
+      setFileName(soundFile.filename);
     }
   };
 
   const navigate = () => {
-    if(fileName) router.navigate('/Reproductor');
+    if (fileName) router.navigate('/Reproductor');
   };
 
-  console.log(fileName);
+  const changeSound = async () => {
+    await handleAudio.changeSound();
+    setIsPlay(true);
+    const res = await handleAudio.getSound();
+    setSoundFile(res[0]);
+  };
+
+  console.log(isPlay);
 
   return (
     <TouchableHighlight onPress={navigate}>
       <View className="flex-row z-50 fixed items-center p-2 opacity-80 bg-black ">
-            <Image source={LogoPro} style={styles.img} />
+        <Image source={LogoPro} style={styles.img} />
         {fileName ? (
           <>
             <View className="w-60 ml-3 flex-shrink">
               <Text className="text-white max-h-8 mr-5">
                 {fileName && fileName}
               </Text>
-              <Text className="text-yellow-400">
-                {duration(positionAudio)}
-              </Text>
+              <Text className="text-yellow-400">{duration(soundFile.duration)}</Text>
             </View>
             <View className="flex-row justify-between flex-1">
               <Pressable
                 onPress={() => {
-                  if (isPlaying) {
-                    setIsPlaying(false);
-                    handleAudio.playAudio();
-                  } else {
-                    setIsPlaying(true);
+                  if (isPlay) {
+                    setIsPlay(false);
                     handleAudio.pauseAudio();
+                  } else {
+                    setIsPlay(true);
+                    handleAudio.playAudio();
                   }
                 }}
               >
-                {!isPlaying ? (
+                {isPlay ? (
                   <PauseIcon color={'#fff'} size={35} />
                 ) : (
                   <PlayIcon size={35} color={'#fff'} />
                 )}
               </Pressable>
-              <Pressable
-                onPress={() => {
-                  handleAudio.changeSound();
-                }}
-              >
+              <Pressable onPress={changeSound}>
                 <RightIcon size={35} />
               </Pressable>
             </View>
           </>
         ) : (
-          <Text className="text-white ml-2 h-12 text-center ">No se está reproduciendo ninguna música </Text>
+          <Text className="text-white ml-2 h-12 text-center ">
+            No se está reproduciendo ninguna música{' '}
+          </Text>
         )}
       </View>
     </TouchableHighlight>
