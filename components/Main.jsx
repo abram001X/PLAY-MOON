@@ -37,10 +37,10 @@ export default function Main() {
       >
         <View
           className="z-0 mb-32"
-          style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+          style={{ paddingBottom: insets.bottom }}
         >
           {/* <Search albums={albums} />*/}
-          <View className='p-1 pt-0 pb-0 '>
+          <View>
             {albums ? (
               <>
                 <ScrollView>
@@ -59,7 +59,7 @@ export default function Main() {
               <ActivityIndicator />
             )}
           </View>
-            <Plane />
+          <Plane />
         </View>
       </ImageBackground>
     </>

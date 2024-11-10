@@ -17,19 +17,20 @@ import { AudioContext } from '../provider/AudioProvider';
 export default function Plane() {
   const [fileName, setFileName] = useState(null);
 
-  const { soundFile, setSoundFile, isPlay, setIsPlay, } =
+  const { soundFile, setSoundFile, isPlay, setIsPlay, intervalRef } =
     useContext(AudioContext);
   useEffect(() => {
     handleFileName();
   }, [soundFile]);
   const handleFileName = async () => {
+    clearInterval(intervalRef.current);
     if (soundFile) {
       setFileName(soundFile.filename);
     }
   };
 
   const navigate = () => {
-    if (fileName) router.navigate('/Reproductor');
+    if (fileName) router.navigate(`${isPlay}`);
   };
 
   const changeSound = async () => {
@@ -38,8 +39,6 @@ export default function Plane() {
     const res = await handleAudio.getSound();
     setSoundFile(res[0]);
   };
-
-  console.log(isPlay);
 
   return (
     <TouchableHighlight onPress={navigate}>
@@ -51,13 +50,16 @@ export default function Plane() {
               <Text className="text-white max-h-8 mr-5">
                 {fileName && fileName}
               </Text>
-              <Text className="text-yellow-400">{duration(soundFile.duration)}</Text>
+              <Text className="text-yellow-400">
+                {duration(soundFile.duration)}
+              </Text>
             </View>
             <View className="flex-row justify-between flex-1">
               <Pressable
                 onPress={() => {
                   if (isPlay) {
                     setIsPlay(false);
+                    clearInterval(intervalRef.current);
                     handleAudio.pauseAudio();
                   } else {
                     setIsPlay(true);

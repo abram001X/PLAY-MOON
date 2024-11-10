@@ -13,8 +13,6 @@ export default function AudioProvider({ children }) {
     <AudioContext.Provider
       value={{
         intervalRef,
-        position,
-        setPosition,
         isPlay,
         setIsPlay,
         soundFile,

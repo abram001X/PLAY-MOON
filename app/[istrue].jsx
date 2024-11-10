@@ -23,45 +23,52 @@ import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration.js';
 import { handleAudio } from '../lib/audioObject.js';
 import { AudioContext } from '../provider/AudioProvider.jsx';
+import { router, useLocalSearchParams } from 'expo-router';
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
   const [sound, setSound] = useState(null);
   const [position, setPosition] = useState(0);
-  const intervalRef = useRef(null);
   const [isRandom, setIsRandom] = useState(false);
-  const { setSoundFile, setIsPlay, isPlay } = useContext(AudioContext);
-
+  const [isPlay, setIsPlay] = useState(false);
+  const { setSoundFile, intervalRef } = useContext(AudioContext);
+  const { istrue } = useLocalSearchParams();
   useEffect(() => {
-    handleSound();
-  }, []);
-
-  useEffect(() => {
+    console.log(isPlay, 'isplay');
     if (isPlay) {
       const interval = setInterval(async () => {
         const seconds = await handleAudio.rangeProccess();
         console.log(seconds);
         setPosition(seconds);
-        if (seconds + 1 >= sound.duration) {
+        if (sound && seconds + 1 >= sound.duration) {
           changeAudio();
         }
-      }, 900);
+      }, 700);
+
       intervalRef.current = interval;
     } else clearInterval(intervalRef.current);
+    return () => clearInterval(intervalRef.current);
   }, [isPlay]);
 
+  useEffect(() => {
+    handleSound();
+  }, []);
+
   const handlePosition = async (value) => {
-    //value[0]
     await handleAudio.handlePosition(value[0] * 1000);
     setPosition(value[0]);
   };
 
   const handleSound = async () => {
+    clearInterval(intervalRef.current);
+    if (istrue == 'true') setIsPlay(true);
+    else setIsPlay(false);
     const res = await handleAudio.getSound();
-    setIsPlay(isPlay === null ? true : isPlay);
-    setSeconds(duration(res[0].duration));
+    const res2 = await handleAudio.rangeProccess();
+    console.log(istrue, 'istrue');
     setSound(res[0]);
     setSoundFile(res[0]);
-    clearInterval(intervalRef.current);
+    setSeconds(duration(res[0].duration));
+    setPosition(res2);
   };
 
   const randomList = async () => {
@@ -70,9 +77,9 @@ export default function Reproductor() {
   };
 
   const pauseSound = () => {
+    clearInterval(intervalRef.current);
     handleAudio.pauseAudio();
     setIsPlay(false);
-    clearInterval(intervalRef.current);
   };
 
   const playSound = () => {
@@ -81,18 +88,19 @@ export default function Reproductor() {
   };
 
   const backAudio = async () => {
-    setIsPlay(true);
+    pauseSound();
     await handleAudio.backSound();
     await handleSound();
     setPosition(0);
+    setIsPlay(true);
   };
 
   const changeAudio = async () => {
-    clearInterval(intervalRef.current)
-    setIsPlay(false);
+    pauseSound();
     await handleAudio.changeSound();
     await handleSound();
     setPosition(0);
+    setIsPlay(true);
   };
 
   return (
