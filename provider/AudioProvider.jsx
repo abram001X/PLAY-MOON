@@ -6,13 +6,12 @@ export const AudioContext = createContext();
 export default function AudioProvider({ children }) {
   const [soundFile, setSoundFile] = useState(null);
   const [isPlay, setIsPlay] = useState(null);
-  const [position, setPosition] = useState(0);
-  const intervalRef = useRef(null);
-
+  const [isRandom, setIsRandom] = useState()
   return (
     <AudioContext.Provider
       value={{
-        intervalRef,
+        isRandom, 
+        setIsRandom,
         isPlay,
         setIsPlay,
         soundFile,

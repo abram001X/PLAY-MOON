@@ -9,23 +9,44 @@ import {
 import { PlayIcon, PauseIcon, RightIcon } from './Icons';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { handleAudio } from '../lib/audioObject';
 import { router } from 'expo-router';
 import { AudioContext } from '../provider/AudioProvider';
 
 export default function Plane() {
   const [fileName, setFileName] = useState(null);
-
-  const { soundFile, setSoundFile, isPlay, setIsPlay, intervalRef } =
+  const [position, setPosition] = useState(0);
+  const intervalRef = useRef(null)
+  const { soundFile, setSoundFile, isPlay, setIsPlay, } =
     useContext(AudioContext);
+
   useEffect(() => {
     handleFileName();
   }, [soundFile]);
+
+  useEffect(() => {
+    console.log(isPlay, 'isplay');
+    if (isPlay) {
+      const interval = setInterval(async () => {
+        const seconds = await handleAudio.rangeProccess();
+        console.log(seconds);
+        setPosition(seconds);
+        if (soundFile && seconds + 1 >= soundFile.duration) {
+          changeSound();
+        }
+      }, 1000);
+
+      intervalRef.current = interval;
+    } else clearInterval(intervalRef.current);
+    return () => clearInterval(intervalRef.current);
+  }, [isPlay]);
+
   const handleFileName = async () => {
-    clearInterval(intervalRef.current);
     if (soundFile) {
       setFileName(soundFile.filename);
+      const res2 = await handleAudio.rangeProccess();
+      setPosition(res2);
     }
   };
 
@@ -34,10 +55,12 @@ export default function Plane() {
   };
 
   const changeSound = async () => {
+    clearInterval(intervalRef.current);
+    setIsPlay(false)
     await handleAudio.changeSound();
-    setIsPlay(true);
     const res = await handleAudio.getSound();
     setSoundFile(res[0]);
+    setIsPlay(true);
   };
 
   return (
@@ -51,7 +74,7 @@ export default function Plane() {
                 {fileName && fileName}
               </Text>
               <Text className="text-yellow-400">
-                {duration(soundFile.duration)}
+                {duration(parseInt(position))}
               </Text>
             </View>
             <View className="flex-row justify-between flex-1">
