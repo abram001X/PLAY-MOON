@@ -6,8 +6,7 @@ import {
   Text,
   ImageBackground,
   TouchableHighlight,
-  Pressable,
-  BackHandler
+  Pressable
 } from 'react-native';
 import {
   LeftIcon,
@@ -18,7 +17,6 @@ import {
   PauseIcon
 } from '../components/Icons.jsx';
 import { useContext, useEffect, useRef, useState } from 'react';
-import * as MediaLibrary from 'expo-media-library';
 import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration.js';
 import { handleAudio } from '../lib/audioObject.js';
@@ -43,8 +41,8 @@ export default function Reproductor() {
       const interval = setInterval(async () => {
         const seconds = await handleAudio.rangeProccess();
         setPosition(seconds);
-        if (sound && seconds + 1 >= sound.duration) {
-          changeAudio();
+        if (sound && seconds >= sound.duration) {
+          await changeAudio();
         }
       }, 1000);
 

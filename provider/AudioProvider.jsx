@@ -1,16 +1,14 @@
-import { createContext, useEffect, useRef, useState } from 'react';
-import * as MediaLibrary from 'expo-media-library';
-import { Audio } from 'expo-av';
-import { handleAudio } from '../lib/audioObject';
+import { createContext, useState } from 'react';
 export const AudioContext = createContext();
 export default function AudioProvider({ children }) {
   const [soundFile, setSoundFile] = useState(null);
   const [isPlay, setIsPlay] = useState(null);
-  const [isRandom, setIsRandom] = useState()
+  const [isRandom, setIsRandom] = useState(false);
+  
   return (
     <AudioContext.Provider
       value={{
-        isRandom, 
+        isRandom,
         setIsRandom,
         isPlay,
         setIsPlay,

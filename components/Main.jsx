@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   View,
-  FlatList,
   ActivityIndicator,
   StyleSheet,
   ImageBackground,
-  ScrollView,
-  VirtualizedList
+  ScrollView
 } from 'react-native';
 
 import Musics from './Musics.jsx';
@@ -20,14 +18,26 @@ export default function Main() {
   const insets = useSafeAreaInsets();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [albums, setAlbums] = useState(null);
-
+  const [listAudio, setListAudio] = useState([]);
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
+        setListAudio(assets);
       });
   }, [permissionResponse, requestPermission]);
+
+  const handleAlbums = (text) => {
+    if (text !== '') {
+      return setAlbums(
+        listAudio.filter((obj) =>
+          obj.filename.toLowerCase().includes(text.toLowerCase())
+        )
+      );
+    }
+    setAlbums(listAudio);
+  };
 
   return (
     <>
@@ -35,23 +45,14 @@ export default function Main() {
         source={require('../assets/fondo.jpeg')}
         style={styles.imgBack}
       >
-        <View
-          className="z-0 mb-32"
-          style={{ paddingBottom: insets.bottom }}
-        >
-          {/* <Search albums={albums} />*/}
+        <Search handleAlbums={handleAlbums} />
+        <View className="z-0 mb-11 " style={{ paddingBottom: insets.bottom }}>
           <View>
             {albums ? (
               <>
                 <ScrollView>
                   {albums.map((item) => {
-                    return (
-                      <Musics
-                        key={item.id}
-                        album={item}
-                        //handlePosition={handlePosition}
-                      />
-                    );
+                    return <Musics key={item.id} album={item} />;
                   })}
                 </ScrollView>
               </>
@@ -59,7 +60,6 @@ export default function Main() {
               <ActivityIndicator />
             )}
           </View>
-          <Plane />
         </View>
       </ImageBackground>
     </>
