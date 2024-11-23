@@ -21,7 +21,7 @@ import { Slider } from '@miblanchard/react-native-slider';
 import { duration } from '../lib/duration.js';
 import { handleAudio } from '../lib/audioObject.js';
 import { AudioContext } from '../provider/AudioProvider.jsx';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
@@ -107,6 +107,11 @@ export default function Reproductor() {
       source={require('../assets/fondo.jpeg')}
       style={styles.imgBack}
     >
+      <Stack.Screen
+        options={{
+          headerRight: () => {}
+        }}
+      />
       {sound && (
         <View style={styles.contSound}>
           <View style={styles.contImg}>

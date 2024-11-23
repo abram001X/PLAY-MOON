@@ -10,16 +10,28 @@ export default function Layout() {
           headerStyle: { backgroundColor: '#ddd' },
           headerTitle: 'PLAYMOON',
           headerRight: () => (
-            <Link asChild href="/playlist">
-              <TouchableHighlight
-                activeOpacity={0.9}
-                underlayColor="#999"
-                className="p-5"
-                style={{ borderRadius: 50 }}
-              >
-                <PlayListIcon />
-              </TouchableHighlight>
-            </Link>
+            <>
+              <Link asChild href="/playlist">
+                <TouchableHighlight
+                  activeOpacity={0.9}
+                  underlayColor="#999"
+                  className="p-5"
+                  style={{ borderRadius: 50 }}
+                >
+                  <PlayListIcon />
+                </TouchableHighlight>
+              </Link>
+              <Link asChild href="/Search">
+                <TouchableHighlight
+                  activeOpacity={0.9}
+                  underlayColor="#999"
+                  className="p-5"
+                  style={{ borderRadius: 50 }}
+                >
+                  <SearchIcon fontSize={20}/>
+                </TouchableHighlight>
+              </Link>
+            </>
           )
         }}
       />

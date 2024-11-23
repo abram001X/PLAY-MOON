@@ -5,17 +5,18 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 export function PlayIcon(props) {
-  return <AntDesign name="play" size={60} color="white" {...props} />;
+  return <FontAwesome name="play" size={40} color="white" {...props} />;
 }
 
 export function RightIcon(props) {
-  return <AntDesign name="stepforward" size={50} color="white" {...props} />;
+  return <AntDesign name="stepforward" size={40} color="white" {...props} />;
 }
 
 export function LeftIcon(props) {
-  return <AntDesign name="stepbackward" size={50} color="white" {...props} />;
+  return <AntDesign name="stepbackward" size={40} color="white" {...props} />;
 }
 
 export function RandomIcon(props) {
@@ -26,7 +27,7 @@ export function RepeatIcon(props) {
 }
 
 export function PauseIcon(props) {
-  return <AntDesign name="pausecircle" size={60} color="white" {...props} />;
+  return <FontAwesome name="pause" size={40} color="white" {...props} />;
 }
 
 export function BackIcon(props) {
@@ -53,4 +54,8 @@ export function PlayListIcon(props) {
       {...props}
     />
   );
+}
+
+export function ClearIcon(props) {
+  return <FontAwesome6 name="xmark" {...props} size={24} color="black" />;
 }

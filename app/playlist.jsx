@@ -12,7 +12,7 @@ export default function playlist() {
   );
 }
 const styles = StyleSheet.create({
-    imgBack:{
-        flex:1
-    }
-})
+  imgBack: {
+    flex: 1
+  }
+});
