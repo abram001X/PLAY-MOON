@@ -10,7 +10,7 @@ export default function Musics({ album }) {
     if (res.getStatusAsync()) router.navigate('/true');
   };
   return (
-    <Pressable onPress={create}>
+    
       <View key={album.id} className="flex-row  p-2 pl-0">
         <Image source={LogoPro} style={styles.img} />
         <View className="flex-shrink">
@@ -20,7 +20,7 @@ export default function Musics({ album }) {
           </Text>
         </View>
       </View>
-    </Pressable>
+    
   );
 }
 const styles = StyleSheet.create({

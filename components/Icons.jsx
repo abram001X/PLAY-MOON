@@ -59,3 +59,7 @@ export function PlayListIcon(props) {
 export function ClearIcon(props) {
   return <FontAwesome6 name="xmark" {...props} size={24} color="black" />;
 }
+
+export function OrderIcon(props) {
+  return <FontAwesome name="sort-alpha-asc" size={24} {...props} color="black" />
+}

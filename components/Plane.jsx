@@ -26,7 +26,6 @@ export default function Plane() {
   }, [soundFile]);
 
   useEffect(() => {
-    console.log(isPlay, 'isplay');
     if (isPlay) {
       const interval = setInterval(async () => {
         const seconds = await handleAudio.rangeProccess();
@@ -65,7 +64,7 @@ export default function Plane() {
 
   return (
     <TouchableHighlight onPress={navigate}>
-      <View className="flex-row z-50 fixed items-center p-2 opacity-80 bg-black ">
+      <View className="flex-row z-30 fixed items-center p-2 opacity-80 bg-black ">
         <Image source={LogoPro} style={styles.img} />
         {fileName ? (
           <>
