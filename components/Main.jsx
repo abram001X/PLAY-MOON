@@ -18,8 +18,6 @@ export default function Main() {
   const [pressOrder, setPressOrder] = useState(false);
   const [albums, setAlbums] = useState([]);
   useEffect(() => {
-    const l = MediaLibrary.SortBy.creationTime;
-    console.log(l);
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
