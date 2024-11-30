@@ -17,8 +17,8 @@ import { AudioContext } from '../provider/AudioProvider';
 export default function Plane() {
   const [fileName, setFileName] = useState(null);
   const [position, setPosition] = useState(0);
-  const intervalRef = useRef(null)
-  const { soundFile, setSoundFile, isPlay, setIsPlay, } =
+  const intervalRef = useRef(null);
+  const { soundFile, setSoundFile, isPlay, setIsPlay } =
     useContext(AudioContext);
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export default function Plane() {
     if (isPlay) {
       const interval = setInterval(async () => {
         const seconds = await handleAudio.rangeProccess();
-        console.log(seconds);
         setPosition(seconds);
         if (soundFile && seconds + 1 >= soundFile.duration) {
           changeSound();
@@ -55,7 +54,7 @@ export default function Plane() {
 
   const changeSound = async () => {
     clearInterval(intervalRef.current);
-    setIsPlay(false)
+    setIsPlay(false);
     await handleAudio.changeSound();
     const res = await handleAudio.getSound();
     setSoundFile(res[0]);
