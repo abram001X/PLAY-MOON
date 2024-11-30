@@ -33,7 +33,8 @@ export default function Reproductor() {
   const { istrue } = useLocalSearchParams();
 
   useEffect(() => {
-    handleSound();
+    if (istrue == 'true') handleSound(true);
+    else handleSound(false)
   }, []);
 
   useEffect(() => {
@@ -65,7 +66,6 @@ export default function Reproductor() {
     setSeconds(duration(res[0].duration));
     setPosition(res2);
     if (play) setIsPlay(true);
-    else if (istrue == 'true') setIsPlay(true);
     else setIsPlay(false);
   };
 
