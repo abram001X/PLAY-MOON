@@ -1,9 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
-import { View, ActivityIndicator, ScrollView } from 'react-native';
-
+import { useMemo } from 'react';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { orderAlbum } from '../lib/orderAlbums.js';
 import List from './List.jsx';
 import { handleAudio } from '../lib/audioObject.js';
 export default function Home({ orderType, albums }) {

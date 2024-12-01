@@ -6,6 +6,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 export function PlayIcon(props) {
   return <FontAwesome name="play" size={40} color="white" {...props} />;
@@ -62,4 +63,8 @@ export function ClearIcon(props) {
 
 export function OrderIcon(props) {
   return <FontAwesome name="sort-alpha-asc" size={24} {...props} color="black" />
+}
+
+export function MenuIconVertical(props) {
+  return <SimpleLineIcons name="options-vertical" size={24} {...props} color="white" />
 }

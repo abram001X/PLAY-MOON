@@ -13,7 +13,6 @@ import {
   StyleSheet,
   View,
   Text,
-  ImageBackground,
   TouchableHighlight,
   Pressable
 } from 'react-native';
@@ -72,6 +71,7 @@ export default function Sound({
               <TouchableHighlight
                 activeOpacity={0.6}
                 underlayColor="#222"
+                classname="rounded-full"
                 style={
                   isRandom && {
                     backgroundColor: '#222',
