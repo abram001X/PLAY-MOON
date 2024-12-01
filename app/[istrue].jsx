@@ -9,32 +9,21 @@ import Sound from '../components/Sound.jsx';
 
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
-  const [sound, setSound] = useState(null);
-  const [position, setPosition] = useState(0);
   const intervalRef = useRef(null);
-  const { setSoundFile, isPlay, setIsPlay, setIsRandom } =
-    useContext(AudioContext);
+  const {
+    sound,
+    setSound,
+    setIsPlay,
+    setIsRandom,
+    position,
+    setPosition
+  } = useContext(AudioContext);
   const { istrue } = useLocalSearchParams();
 
   useEffect(() => {
     if (istrue == 'true') handleSound(true);
-    else handleSound(false)
+    else handleSound(false);
   }, []);
-
-  useEffect(() => {
-    if (isPlay) {
-      const interval = setInterval(async () => {
-        const seconds = await handleAudio.rangeProccess();
-        setPosition(seconds);
-        if (sound && seconds >= sound.duration) {
-          await changeAudio();
-        }
-      }, 1000);
-
-      intervalRef.current = interval;
-    } else clearInterval(intervalRef.current);
-    return () => clearInterval(intervalRef.current);
-  }, [isPlay]);
 
   const handlePosition = async (value) => {
     await handleAudio.handlePosition(value[0] * 1000);
@@ -46,7 +35,6 @@ export default function Reproductor() {
     const res = await handleAudio.getSound();
     const res2 = await handleAudio.rangeProccess();
     setSound(res[0]);
-    setSoundFile(res[0]);
     setSeconds(duration(res[0].duration));
     setPosition(res2);
     if (play) setIsPlay(true);

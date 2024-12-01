@@ -17,12 +17,12 @@ export default function Main() {
   const [orderType, setOrderType] = useState('fecha desc');
   const [pressOrder, setPressOrder] = useState(false);
   const [albums, setAlbums] = useState([]);
+
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
-        console.log(assets[0]);
       });
   }, [permissionResponse, requestPermission]);
 
