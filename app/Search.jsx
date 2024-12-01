@@ -22,11 +22,12 @@ export default function Search() {
     if (text == '') {
       setListAudio([]);
     } else
-      setListAudio(
-        albums.filter((obj) =>
-          obj.filename.toLowerCase().includes(text.toLowerCase())
-        )
-      );
+      albums &&
+        setListAudio(
+          albums.filter((obj) =>
+            obj.filename.toLowerCase().includes(text.toLowerCase())
+          )
+        );
     setIsSearch(false);
   };
   return (
@@ -50,8 +51,8 @@ export default function Search() {
         {!isSearch ? (
           <>
             <ScrollView>
-              {listAudio.map((item) => {
-                return <Musics key={item.id} album={item} />;
+              {listAudio.map((item, j) => {
+                return j <= 10 && <Musics key={item.id} album={item} />;
               })}
             </ScrollView>
           </>

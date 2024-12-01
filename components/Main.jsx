@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import * as MediaLibrary from 'expo-media-library';
 import { handleAudio } from '../lib/audioObject.js';
@@ -12,17 +12,18 @@ import {
   StyleSheet,
   ImageBackground
 } from 'react-native';
+import { AudioContext } from '../provider/AudioProvider.jsx';
 export default function Main() {
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [orderType, setOrderType] = useState('fecha desc');
   const [pressOrder, setPressOrder] = useState(false);
-  const [albums, setAlbums] = useState([]);
-
+  const { albums, setAlbums } = useContext(AudioContext);
   useEffect(() => {
     handleAudio
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
+        console.log(assets[0]);
       });
   }, [permissionResponse, requestPermission]);
 

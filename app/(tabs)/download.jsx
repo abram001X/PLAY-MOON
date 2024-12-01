@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import ListSearch from '../../components/ListSearch';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ClearIcon, PauseIcon, PlayIcon } from '../../components/Icons';
+import { ClearIcon} from '../../components/Icons';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 export default function download() {
