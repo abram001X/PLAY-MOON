@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text } from 'react-native';
 
 export default function playlist() {
   return (
@@ -7,10 +7,13 @@ export default function playlist() {
       className="flex-1"
       style={styles.imgBack}
     >
-      <View className="flex-1"></View>
+      <View className="flex-1">
+        <Text>Playlists : </Text>
+      </View>
     </ImageBackground>
   );
 }
+
 const styles = StyleSheet.create({
   imgBack: {
     flex: 1
