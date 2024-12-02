@@ -7,6 +7,7 @@ import { MenuIconVertical } from './Icons';
 import { TouchableHighlight } from 'react-native';
 import Modal from 'react-native-modal';
 import { useState } from 'react';
+import { handleStorage } from '../lib/storageObject';
 export default function Musics({ album }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const create = async () => {
@@ -46,7 +47,14 @@ export default function Musics({ album }) {
       >
         <View className="z-30 p-2 bg-black w-56 rounded-md">
           <Text className="text-white p-2">Audio seleccionado: </Text>
-          <Text className="text-white p-2">Agregar a playlist </Text>
+          <TouchableHighlight
+            className="rounded-md"
+            activeOpacity={0.8}
+            underlayColor={'#666'}
+            //onPress={() => handleStorage.addMusicPlayList()}
+          >
+            <Text className="text-white p-2 mt-2">Agregar a playlist </Text>
+          </TouchableHighlight>
           <TouchableHighlight
             className="rounded-md"
             activeOpacity={0.8}

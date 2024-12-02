@@ -62,9 +62,22 @@ export function ClearIcon(props) {
 }
 
 export function OrderIcon(props) {
-  return <FontAwesome name="sort-alpha-asc" size={24} {...props} color="black" />
+  return (
+    <FontAwesome name="sort-alpha-asc" size={24} {...props} color="black" />
+  );
 }
 
 export function MenuIconVertical(props) {
-  return <SimpleLineIcons name="options-vertical" size={24} {...props} color="white" />
+  return (
+    <SimpleLineIcons
+      name="options-vertical"
+      size={24}
+      {...props}
+      color="white"
+    />
+  );
+}
+
+export function AddIcon(props) {
+  return <FontAwesome6 name="add" size={24} {...props} color="white" />;
 }
