@@ -23,7 +23,7 @@ export default function Main() {
       .getPermission(permissionResponse, requestPermission)
       .then((assets) => {
         setAlbums(assets);
-        console.log(assets[0]);
+        //console.log(assets[0]);
       });
   }, [permissionResponse, requestPermission]);
 
