@@ -1,11 +1,11 @@
 import { StyleSheet, ImageBackground } from 'react-native';
 
 import { useContext, useEffect, useRef, useState } from 'react';
-import { duration } from '../lib/duration.js';
-import { handleAudio } from '../lib/audioObject.js';
-import { AudioContext } from '../provider/AudioProvider.jsx';
+import { duration } from '../../lib/duration.js';
+import { handleAudio } from '../../lib/audioObject.js';
+import { AudioContext } from '../../provider/AudioProvider.jsx';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import Sound from '../components/Sound.jsx';
+import Sound from '../../components/Sound.jsx';
 
 export default function Reproductor() {
   const [seconds, setSeconds] = useState(null);
@@ -76,7 +76,7 @@ export default function Reproductor() {
 
   return (
     <ImageBackground
-      source={require('../assets/fondo.jpeg')}
+      source={require('../../assets/fondo.jpeg')}
       style={styles.imgBack}
     >
       <Stack.Screen

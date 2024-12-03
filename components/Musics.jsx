@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ScrollView
+} from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
 import { router } from 'expo-router';
@@ -8,13 +15,27 @@ import { TouchableHighlight } from 'react-native';
 import Modal from 'react-native-modal';
 import { useState } from 'react';
 import { handleStorage } from '../lib/storageObject';
-export default function Musics({ album }) {
+import PlayListComp from './PlayListComp';
+export default function Musics({ album, list }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  
   const create = async () => {
-    await handleAudio.createAudioApp(album.uri, parseInt(album.id), true);
+    await handleAudio.createAudioApp(
+      album.uri,
+      parseInt(album.id),
+      true,
+      list && list
+    );
     const res = await handleAudio.getObject();
-    if (res.getStatusAsync()) router.navigate('/true');
+    if (res.getStatusAsync()) router.navigate('/reproductor/true');
   };
+  
+  const lists = async () => {
+    const list = await handleStorage.getItems();
+    setPlayLists(list);
+    console.log(list);
+  };
+
   return (
     <>
       <Pressable onPress={create}>
@@ -51,7 +72,11 @@ export default function Musics({ album }) {
             className="rounded-md"
             activeOpacity={0.8}
             underlayColor={'#666'}
-            //onPress={() => handleStorage.addMusicPlayList()}
+            onPress={() => {
+              setMenuOpen(false);
+              setPlayListMenu(true);
+              lists();
+            }}
           >
             <Text className="text-white p-2 mt-2">Agregar a playlist </Text>
           </TouchableHighlight>
@@ -65,9 +90,39 @@ export default function Musics({ album }) {
           </TouchableHighlight>
         </View>
       </Modal>
+      <Modal
+        className="items-center"
+        isVisible={playListMenu}
+        animationIn={'bounceIn'}
+        animationOut={'bounceOut'}
+        onBackdropPress={() => setPlayListMenu(false)}
+      >
+        <View className="z-30 p-2 bg-black w-56 rounded-md">
+          <Text className="text-white p-2">LISTAS DE REPRODUCCIÓN: </Text>
+          <ScrollView>
+            {playLists[0] && playLists.map((item, j) => {
+                return (
+                  <TouchableHighlight
+                    className="rounded-md"
+                    activeOpacity={0.8}
+                    underlayColor={'#666'}
+                    key={j}
+                    onPress={async () => {
+                      await handleStorage.addMusicPlayList(item.name, album, 1);
+                      setPlayListMenu(false);
+                    }}
+                  >
+                    <PlayListComp playLists={item} isComp={false} />;
+                  </TouchableHighlight>
+                );
+              })}
+          </ScrollView>
+        </View>
+      </Modal>
     </>
   );
 }
+
 const styles = StyleSheet.create({
   img: {
     width: 50,
