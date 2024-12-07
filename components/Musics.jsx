@@ -16,24 +16,21 @@ import Modal from 'react-native-modal';
 import { useState } from 'react';
 import { handleStorage } from '../lib/storageObject';
 import PlayListComp from './PlayListComp';
-export default function Musics({ album, list }) {
+export default function Musics({ album, list, playListName }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  
+
+  const [playListMenu, setPlayListMenu] = useState(false);
+  const [playLists, setPlayLists] = useState([]);
   const create = async () => {
-    await handleAudio.createAudioApp(
-      album.uri,
-      parseInt(album.id),
-      true,
-      list && list
-    );
+    await handleAudio.createAudioApp(album.uri, parseInt(album.id), true, list);
     const res = await handleAudio.getObject();
     if (res.getStatusAsync()) router.navigate('/reproductor/true');
   };
-  
+
   const lists = async () => {
     const list = await handleStorage.getItems();
     setPlayLists(list);
-    console.log(list);
+    // console.log(list);
   };
 
   return (
@@ -80,13 +77,34 @@ export default function Musics({ album, list }) {
           >
             <Text className="text-white p-2 mt-2">Agregar a playlist </Text>
           </TouchableHighlight>
+
+          {playListName ? (
+            <TouchableHighlight
+              className="rounded-md"
+              activeOpacity={0.8}
+              underlayColor={'#666'}
+              onPress={async () =>
+                await handleStorage.removeMusicPlayList(
+                  playListName,
+                  [album.filename],
+                  1
+                )
+              }
+            >
+              <Text className="text-red-800 p-2 ">
+                Eliminar música de la playlist
+              </Text>
+            </TouchableHighlight>
+          ) : null}
           <TouchableHighlight
             className="rounded-md"
             activeOpacity={0.8}
             underlayColor={'#666'}
             onPress={() => handleAudio.removeAssets([album.id])}
           >
-            <Text className="text-red-800 p-2 ">Eliminar audio </Text>
+            <Text className="text-red-800 p-2 ">
+              Eliminar audio del dispositivo
+            </Text>
           </TouchableHighlight>
         </View>
       </Modal>
@@ -99,24 +117,34 @@ export default function Musics({ album, list }) {
       >
         <View className="z-30 p-2 bg-black w-56 rounded-md">
           <Text className="text-white p-2">LISTAS DE REPRODUCCIÓN: </Text>
-          <ScrollView>
-            {playLists[0] && playLists.map((item, j) => {
-                return (
-                  <TouchableHighlight
-                    className="rounded-md"
-                    activeOpacity={0.8}
-                    underlayColor={'#666'}
-                    key={j}
-                    onPress={async () => {
-                      await handleStorage.addMusicPlayList(item.name, album, 1);
-                      setPlayListMenu(false);
-                    }}
-                  >
-                    <PlayListComp playLists={item} isComp={false} />;
-                  </TouchableHighlight>
-                );
-              })}
-          </ScrollView>
+          <View>
+            <ScrollView>
+              {playLists[0]
+                ? playLists.map((item, j) => {
+                    return (
+                      <TouchableHighlight
+                        className="rounded-md"
+                        activeOpacity={0.8}
+                        underlayColor={'#666'}
+                        key={j}
+                        onPress={async () => {
+                          await handleStorage.addMusicPlayList(
+                            item.name,
+                            album,
+                            1
+                          );
+                          setPlayListMenu(false);
+                        }}
+                      >
+                        <View>
+                          <PlayListComp playLists={item} isComp={false} />
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  })
+                : null}
+            </ScrollView>
+          </View>
         </View>
       </Modal>
     </>

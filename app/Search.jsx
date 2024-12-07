@@ -52,7 +52,11 @@ export default function Search() {
           <>
             <ScrollView>
               {listAudio.map((item, j) => {
-                return j <= 10 && <Musics key={item.id} album={item} />;
+                return (
+                  j <= 10 && (
+                    <Musics key={item.id} album={item} list={listAudio} />
+                  )
+                );
               })}
             </ScrollView>
           </>

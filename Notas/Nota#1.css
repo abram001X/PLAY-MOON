@@ -368,7 +368,6 @@ document.write(resultado + "<br>")
 -------------------------
 unshift() : Agrega elementos al principio de la array
 let cadena =  ["hola","chao","ayer"]
-
 resultado = cadena.unshift("mañana,lunes")
 
 document.write(resultado + "<br>")--->

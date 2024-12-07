@@ -7,24 +7,23 @@ import List from '../../components/List';
 export default function InPlayList() {
   const { playListName } = useLocalSearchParams();
   const [playList, setPlayList] = useState([]);
-  
+
   useEffect(() => {
     musics();
   }, []);
 
   const musics = async () => {
     const list = await handleStorage.getItem(playListName);
-    setPlayList(list);
-    console.log('listss', list);
+    setPlayList(list.musicList);
+    //console.log('listss', list);
   };
-
   return (
     <ImageBackground
       source={require('../../assets/fondo.jpeg')}
       className="flex-1 "
       style={styles.imgBack}
     >
-      {playList[0] && <List albumVisible={playList.musicList} />}
+      <List albumVisible={playList} playListName={playListName} />
     </ImageBackground>
   );
 }

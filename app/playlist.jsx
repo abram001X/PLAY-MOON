@@ -27,10 +27,10 @@ export default function playlist() {
   const lists = async () => {
     const list = await handleStorage.getItems();
     setPlayLists(list);
-    console.log('list', list);
+    //console.log('list', list);
   };
   const createList = async () => {
-    const value = await handleStorage.createPlayList(playListName, null);
+    const value = await handleStorage.createPlayList(playListName, []);
     setPlayLists(value);
   };
   return (
@@ -69,20 +69,18 @@ export default function playlist() {
           {playList.length !== 0 ? (
             <ScrollView>
               {playList.map((item, j) => {
-                return (
-                  item && (
-                    <Link asChild href={`/playlist/${item.name}`} key={j}>
-                      <TouchableHighlight
-                        className="rounded-md"
-                        activeOpacity={0.8}
-                        underlayColor={'#666'}
-                        key={j}
-                      >
-                        <PlayListComp playLists={item} isComp={true} />
-                      </TouchableHighlight>
-                    </Link>
-                  )
-                );
+                return item ? (
+                  <Link asChild href={`/playlist/${item.name}`} key={j}>
+                    <TouchableHighlight
+                      className="rounded-md"
+                      activeOpacity={0.8}
+                      underlayColor={'#666'}
+                      key={j}
+                    >
+                      <PlayListComp playLists={item} isComp={true} />
+                    </TouchableHighlight>
+                  </Link>
+                ) : null;
               })}
             </ScrollView>
           ) : (
@@ -112,7 +110,10 @@ export default function playlist() {
             className="rounded-md"
             activeOpacity={0.8}
             underlayColor={'#666'}
-            onPress={createList}
+            onPress={() => {
+              createList();
+              setIsMenuOpen(false);
+            }}
           >
             <Text className="text-white mt-4 p-2 bg-slate-500 rounded w-16 text-center self-center">
               Crear{' '}

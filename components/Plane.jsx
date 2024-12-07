@@ -48,7 +48,7 @@ export default function Plane() {
   };
 
   const navigate = () => {
-    if (fileName) router.navigate(`${isPlay}`);
+    if (fileName) router.navigate(`/reproductor/${isPlay}`);
   };
 
   const changeSound = async () => {
