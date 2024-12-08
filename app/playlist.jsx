@@ -15,7 +15,7 @@ import { AddIcon } from '../components/Icons';
 import Modal from 'react-native-modal';
 import { Link, Stack } from 'expo-router';
 import PlayListComp from '../components/PlayListComp';
-
+import ChangePlaylist from '../components/ChangePlaylist';
 export default function playlist() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [playListName, setPlayListName] = useState('');
@@ -33,15 +33,16 @@ export default function playlist() {
     const value = await handleStorage.createPlayList(playListName, []);
     setPlayLists(value);
   };
+  const deletePlaylist = async (name) => {
+    const value = await handleStorage.removePlaylist(name);
+    setPlayLists(value);
+  };
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}
       className="flex-1"
       style={styles.imgBack}
     >
-      <Pressable onPress={async () => await handleStorage.clearStorage()}>
-        <Text>Eliminar las playlists</Text>
-      </Pressable>
       <Stack.Screen
         options={{
           headerRight: () => {}
@@ -50,7 +51,7 @@ export default function playlist() {
       <View className="flex-1">
         <View className="flex-row p-2 justify-evenly items-center border-b-white border-b">
           <Text className=" w-2/3 text-white text-lg text-center">
-            LISTA DE REPRODUCCIÓN : (0)
+            LISTA DE REPRODUCCIÓN : ({playList.length})
           </Text>
           <TouchableHighlight
             className="rounded-md"
@@ -77,7 +78,12 @@ export default function playlist() {
                       underlayColor={'#666'}
                       key={j}
                     >
-                      <PlayListComp playLists={item} isComp={true} />
+                      <PlayListComp
+                        playLists={item}
+                        isComp={true}
+                        deletePlaylist={deletePlaylist}
+                        setPlayLists={setPlayLists}
+                      />
                     </TouchableHighlight>
                   </Link>
                 ) : null;
@@ -91,35 +97,17 @@ export default function playlist() {
       <Modal
         className="items-center"
         isVisible={isMenuOpen}
+        
+        backdropOpacity={0}
         animationIn={'bounceIn'}
         animationOut={'bounceOut'}
         onBackdropPress={() => setIsMenuOpen(false)}
       >
-        <View className="p-3 rounded-md w-80 bg-black">
-          <Text className="mb-4 text-white border-b border-b-white p-1">
-            Nombre de tu nueva playlist
-          </Text>
-          <TextInput
-            className="p-2 text-black bg-white mt-2"
-            placeholder="Nombre"
-            onChangeText={(text) => {
-              setPlayListName(text);
-            }}
-          />
-          <TouchableHighlight
-            className="rounded-md"
-            activeOpacity={0.8}
-            underlayColor={'#666'}
-            onPress={() => {
-              createList();
-              setIsMenuOpen(false);
-            }}
-          >
-            <Text className="text-white mt-4 p-2 bg-slate-500 rounded w-16 text-center self-center">
-              Crear{' '}
-            </Text>
-          </TouchableHighlight>
-        </View>
+        <ChangePlaylist
+          setIsMenuOpen={setIsMenuOpen}
+          setPlayListName={setPlayListName}
+          handleList={createList}
+        />
       </Modal>
     </ImageBackground>
   );

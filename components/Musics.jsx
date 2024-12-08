@@ -58,6 +58,8 @@ export default function Musics({ album, list, playListName }) {
       </Pressable>
       <Modal
         className="items-center"
+        
+        backdropOpacity={0}
         isVisible={menuOpen}
         animationIn={'bounceIn'}
         animationOut={'bounceOut'}
@@ -102,7 +104,7 @@ export default function Musics({ album, list, playListName }) {
             underlayColor={'#666'}
             onPress={() => handleAudio.removeAssets([album.id])}
           >
-            <Text className="text-red-800 p-2 ">
+            <Text className="text-red-700 p-2 ">
               Eliminar audio del dispositivo
             </Text>
           </TouchableHighlight>
@@ -112,6 +114,8 @@ export default function Musics({ album, list, playListName }) {
         className="items-center"
         isVisible={playListMenu}
         animationIn={'bounceIn'}
+        
+        backdropOpacity={0}
         animationOut={'bounceOut'}
         onBackdropPress={() => setPlayListMenu(false)}
       >
