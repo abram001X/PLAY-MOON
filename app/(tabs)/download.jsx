@@ -76,6 +76,7 @@ export default function Download() {
       console.log('assets', asset);
     } catch (e) {
       console.log(e.message);
+      setDownloadMessage('audio no descargado')
     }
   };
 

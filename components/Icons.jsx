@@ -36,7 +36,7 @@ export function BackIcon(props) {
 }
 
 export function SearchIcon(props) {
-  return <Fontisto name="search" size={24} color="black" {...props} />;
+  return <Fontisto name="search" size={20} color="black" {...props} />;
 }
 
 export function MusicIcon(props) {

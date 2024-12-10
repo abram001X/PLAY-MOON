@@ -1,24 +1,34 @@
-import { Tabs } from 'expo-router';
+import Index from './index.js';
+import Download from './Download';
 import { DownloadIcon, MusicIcon, PlayListIcon } from '../../components/Icons';
 
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export default function TabsLayout(){
-
-    return (
-        <Tabs screenOptions={{
-            headerShown: false,
-            tabBarStyle: {backgroundColor: '#ddd'}
-        }}>
-            <Tabs.Screen name='index'
-            options={{
-                title: 'PlayMoon',
-                tabBarIcon: ({color})=> <MusicIcon color={color}/>
-            }}/>
-            <Tabs.Screen name='download'
-            options={{
-                title: 'Download',
-                tabBarIcon: ({color})=> <DownloadIcon color={color}/>
-            }}/>
-        </Tabs>
-    )
+const Tabs = createBottomTabNavigator();
+export default function TabsLayout() {
+  return (
+    <Tabs.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { backgroundColor: '#ddd' }
+      }}
+    >
+      <Tabs.Screen
+        name="Home"
+        options={{
+          title: 'PlayMoon',
+          tabBarIcon: ({ color }) => <MusicIcon color={color} />
+        }}
+        component={Index}
+      />
+      <Tabs.Screen
+        name="Download"
+        options={{
+          title: 'Download',
+          tabBarIcon: ({ color }) => <DownloadIcon color={color} />
+        }}
+        component={Download}
+      />
+    </Tabs.Navigator>
+  );
 }

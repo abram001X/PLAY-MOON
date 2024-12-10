@@ -1,22 +1,16 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import {
-  Button,
   StyleSheet,
-  Text,
-  View,
   TouchableHighlight
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AudioProvider from './provider/AudioProvider.jsx';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Main from './components/Main.jsx';
-import Plane from './components/Plane.jsx';
 import { PlayListIcon, SearchIcon } from './components/Icons.jsx';
 import Playlist from './app/Playlist.jsx';
 import Search from './app/Search.jsx';
 import Reproductor from './app/reproductor/Reproductor.jsx';
 import InPlayList from './app/playlist/InPlayList.jsx';
+import TabsLayout from './app/(tabs)/_layout.js';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -54,13 +48,13 @@ function Layout() {
                 style={{ borderRadius: 50 }}
                 onPress={() => navigation.navigate('Search')}
               >
-                <SearchIcon fontSize={20} />
+                <SearchIcon fontSize={15} />
               </TouchableHighlight>
             </>
           )
         }}
         name="Home"
-        component={Index}
+        component={TabsLayout}
       />
       <Stack.Screen name="Reproductor" component={Reproductor} />
       <Stack.Screen name="Playlist" component={Playlist} />
@@ -70,17 +64,6 @@ function Layout() {
   );
 }
 
-function Index() {
-  return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <View style={{ flex: 1 }}>
-        <Main />
-      </View>
-      <Plane />
-    </SafeAreaProvider>
-  );
-}
 const styles = StyleSheet.create({
   contPadre: {
     flex: 1,
