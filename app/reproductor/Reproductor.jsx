@@ -4,25 +4,19 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { duration } from '../../lib/duration.js';
 import { handleAudio } from '../../lib/audioObject.js';
 import { AudioContext } from '../../provider/AudioProvider.jsx';
-import { Stack, useLocalSearchParams } from 'expo-router';
 import Sound from '../../components/Sound.jsx';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Reproductor() {
+export default function Reproductor({ route }) {
+  const navigation = useNavigation();
   const [seconds, setSeconds] = useState(null);
   const intervalRef = useRef(null);
-  const {
-    sound,
-    setSound,
-    setIsPlay,
-    setIsRandom,
-    position,
-    setPosition
-  } = useContext(AudioContext);
-  const { istrue } = useLocalSearchParams();
+  const { sound, setSound, setIsPlay, setIsRandom, position, setPosition } =
+    useContext(AudioContext);
+  const { istrue } = route.params;
 
   useEffect(() => {
-    if (istrue == 'true') handleSound(true);
-    else handleSound(false);
+    handleSound(istrue);
   }, []);
 
   const handlePosition = async (value) => {
@@ -79,11 +73,6 @@ export default function Reproductor() {
       source={require('../../assets/fondo.jpeg')}
       style={styles.imgBack}
     >
-      <Stack.Screen
-        options={{
-          headerRight: () => {}
-        }}
-      />
       <Sound
         seconds={seconds}
         position={position}

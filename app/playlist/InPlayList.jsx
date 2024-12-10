@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { handleStorage } from '../../lib/storageObject';
-import { useLocalSearchParams } from 'expo-router';
 import { ImageBackground, StyleSheet } from 'react-native';
 import List from '../../components/List';
+import { useNavigation } from '@react-navigation/native';
 
-export default function InPlayList() {
-  const { playListName } = useLocalSearchParams();
+export default function InPlayList({route}) {
+  const navigation = useNavigation()
+  const { playListName } = route.params;
   const [playList, setPlayList] = useState([]);
 
   useEffect(() => {

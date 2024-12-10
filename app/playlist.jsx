@@ -13,10 +13,11 @@ import {
 import { handleStorage } from '../lib/storageObject';
 import { AddIcon } from '../components/Icons';
 import Modal from 'react-native-modal';
-import { Link, Stack } from 'expo-router';
 import PlayListComp from '../components/PlayListComp';
 import ChangePlaylist from '../components/ChangePlaylist';
-export default function playlist() {
+
+export default function Playlist() {
+  const navigation = useNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [playListName, setPlayListName] = useState('');
   const [playList, setPlayLists] = useState([]);
@@ -43,11 +44,6 @@ export default function playlist() {
       className="flex-1"
       style={styles.imgBack}
     >
-      <Stack.Screen
-        options={{
-          headerRight: () => {}
-        }}
-      />
       <View className="flex-1">
         <View className="flex-row p-2 justify-evenly items-center border-b-white border-b">
           <Text className=" w-2/3 text-white text-lg text-center">
@@ -71,21 +67,24 @@ export default function playlist() {
             <ScrollView>
               {playList.map((item, j) => {
                 return item ? (
-                  <Link asChild href={`/playlist/${item.name}`} key={j}>
-                    <TouchableHighlight
-                      className="rounded-md"
-                      activeOpacity={0.8}
-                      underlayColor={'#666'}
-                      key={j}
-                    >
-                      <PlayListComp
-                        playLists={item}
-                        isComp={true}
-                        deletePlaylist={deletePlaylist}
-                        setPlayLists={setPlayLists}
-                      />
-                    </TouchableHighlight>
-                  </Link>
+                  <TouchableHighlight
+                    className="rounded-md"
+                    activeOpacity={0.8}
+                    underlayColor={'#666'}
+                    key={j}
+                    onPress={() =>
+                      navigation.navigate('InPlayList', {
+                        playListName: item.name
+                      })
+                    }
+                  >
+                    <PlayListComp
+                      playLists={item}
+                      isComp={true}
+                      deletePlaylist={deletePlaylist}
+                      setPlayLists={setPlayLists}
+                    />
+                  </TouchableHighlight>
                 ) : null;
               })}
             </ScrollView>
@@ -97,7 +96,6 @@ export default function playlist() {
       <Modal
         className="items-center"
         isVisible={isMenuOpen}
-        
         backdropOpacity={0}
         animationIn={'bounceIn'}
         animationOut={'bounceOut'}

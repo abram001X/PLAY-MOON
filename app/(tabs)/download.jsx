@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ClearIcon} from '../../components/Icons';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-export default function download() {
+export default function Download() {
   const [listSearch, setListSearch] = useState([]);
   const [name, setName] = useState(null);
   const [isLoad, setIsload] = useState(false);

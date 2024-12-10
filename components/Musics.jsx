@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
-import { router } from 'expo-router';
 import { handleAudio } from '../lib/audioObject';
 import { MenuIconVertical } from './Icons';
 import { TouchableHighlight } from 'react-native';
@@ -16,7 +15,9 @@ import Modal from 'react-native-modal';
 import { useState } from 'react';
 import { handleStorage } from '../lib/storageObject';
 import PlayListComp from './PlayListComp';
+import { useNavigation } from '@react-navigation/native';
 export default function Musics({ album, list, playListName }) {
+  const navigation = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [playListMenu, setPlayListMenu] = useState(false);
@@ -24,7 +25,8 @@ export default function Musics({ album, list, playListName }) {
   const create = async () => {
     await handleAudio.createAudioApp(album.uri, parseInt(album.id), true, list);
     const res = await handleAudio.getObject();
-    if (res.getStatusAsync()) router.navigate('/reproductor/true');
+    if (res.getStatusAsync())
+      navigation.navigate('Reproductor', { istrue: true });
   };
 
   const lists = async () => {
@@ -58,7 +60,6 @@ export default function Musics({ album, list, playListName }) {
       </Pressable>
       <Modal
         className="items-center"
-        
         backdropOpacity={0}
         isVisible={menuOpen}
         animationIn={'bounceIn'}
@@ -114,7 +115,6 @@ export default function Musics({ album, list, playListName }) {
         className="items-center"
         isVisible={playListMenu}
         animationIn={'bounceIn'}
-        
         backdropOpacity={0}
         animationOut={'bounceOut'}
         onBackdropPress={() => setPlayListMenu(false)}

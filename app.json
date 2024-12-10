@@ -16,9 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ]
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {
@@ -37,7 +35,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-dev-launcher",
+        {
+          "launchMode": "most-recent"
+        }
+      ]
     ],
     "extra": {
       "router": {
@@ -46,6 +50,7 @@
       "eas": {
         "projectId": "5900d918-d3d1-4aa9-82e5-50eff1c39202"
       }
-    }
+    },
+    "owner": "abrahamalf"
   }
 }

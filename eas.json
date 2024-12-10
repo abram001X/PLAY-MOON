@@ -1,24 +1,20 @@
 {
   "cli": {
-    "version": ">= 14.0.2",
-    "appVersionSource": "remote"
+    "version": ">= 14.0.2"
   },
   "build": {
+    "development:simulator": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "developmentClient": true,
-      "android": {
-        "gradleCommand": ":app:assembleRelease",
-        "buildType": "apk"
-      }
+      "distribution": "internal"
     },
-    "production": {
-      "autoIncrement": true
-    }
+    "production": {}
   },
   "submit": {
     "production": {}
