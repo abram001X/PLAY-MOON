@@ -15,6 +15,7 @@ import { AddIcon } from '../components/Icons';
 import Modal from 'react-native-modal';
 import PlayListComp from '../components/PlayListComp';
 import ChangePlaylist from '../components/ChangePlaylist';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Playlist() {
   const navigation = useNavigation();
@@ -38,6 +39,7 @@ export default function Playlist() {
     const value = await handleStorage.removePlaylist(name);
     setPlayLists(value);
   };
+  
   return (
     <ImageBackground
       source={require('../assets/fondo.jpeg')}

@@ -11,14 +11,14 @@ import LogoPro from '../assets/logoSimple.jpeg';
 import { duration } from '../lib/duration';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { handleAudio } from '../lib/audioObject';
-import { router } from 'expo-router';
 import { AudioContext } from '../provider/AudioProvider';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Plane() {
+  const navigation = useNavigation();
   const [fileName, setFileName] = useState(null);
   const intervalRef = useRef(null);
-  const { sound, setSound, isPlay, setIsPlay, setPosition, position } =
-    useContext(AudioContext);
+  const { sound, setSound, isPlay, setIsPlay, setPosition, position } =useContext(AudioContext);
 
   useEffect(() => {
     handleFileName();
@@ -48,7 +48,7 @@ export default function Plane() {
   };
 
   const navigate = () => {
-    if (fileName) router.navigate(`/reproductor/${isPlay}`);
+    if (fileName) navigation.navigate(`Reproductor`, { istrue: isPlay });
   };
 
   const changeSound = async () => {
